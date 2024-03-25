@@ -1,15 +1,18 @@
 package com.todolist.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+import lombok.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "TB_Usuario")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Usuario implements Serializable {
 
     @Id
