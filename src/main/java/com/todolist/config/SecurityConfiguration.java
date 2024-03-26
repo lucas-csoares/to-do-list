@@ -4,6 +4,7 @@ import com.todolist.security.filter.AutenticacaoFilter;
 import com.todolist.security.filter.LoginFilter;
 import com.todolist.security.permissoes.PermissaoEnum;
 import com.todolist.service.security.UsuarioAutenticadoService;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Autowired
-    private UsuarioAutenticadoService usuarioAutenticadoService;
 
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
@@ -49,6 +48,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests (auth -> {
                     auth.requestMatchers ("/login").permitAll ()
                             .requestMatchers (HttpMethod.POST, "/usuario").permitAll ()
+                            .dispatcherTypeMatchers (DispatcherType.FORWARD, DispatcherType.ERROR).permitAll ()
                             .requestMatchers (HttpMethod.GET, "/usuario").hasAuthority (PermissaoEnum.ADMIN.toString ())
                             .anyRequest ()
                             .authenticated ();

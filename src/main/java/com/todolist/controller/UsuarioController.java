@@ -57,6 +57,10 @@ public class UsuarioController {
     }
 
 
+    /**
+     * Método para deletar o usuário
+     * @param id objeto do tipo Long vinda da variável path na url
+     */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         usuarioService.delete (id);
