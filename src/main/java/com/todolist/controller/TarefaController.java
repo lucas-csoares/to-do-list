@@ -1,16 +1,21 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
+import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
+import com.todolist.response.AtualizarTarefaResponse;
+import com.todolist.response.ObterTarefaResponse;
+import com.todolist.response.ObterTarefasPaginadasResponse;
 import com.todolist.service.TarefaService;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tarefa")
@@ -21,10 +26,88 @@ public class TarefaController {
 
 
     @PostMapping
-    public ResponseEntity<Tarefa> create(@Valid @RequestBody CreateTarefaRequest request) {
+    @Operation(summary = "Cadastra uma tarefa na base de dados")
+    public ResponseEntity<Tarefa> create(@RequestBody CreateTarefaRequest request) {
         Tarefa tarefaSave = tarefaService.create (request);
 
         return new ResponseEntity<> (tarefaSave, HttpStatus.CREATED);
     }
+
+    @GetMapping
+    public ResponseEntity<ObterTarefasPaginadasResponse> findByTarefa(
+            @RequestParam(required = false) String titulo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ){
+
+
+        Page<Tarefa> tarefasPaginadas;
+
+        if(titulo == null) {
+            tarefasPaginadas = this.tarefaService.findAll (PageRequest.of (page, size));
+        } else {
+            tarefasPaginadas = this.tarefaService.findByTitulo (titulo, PageRequest.of (page, size));
+        }
+
+        List<ObterTarefaResponse> tarefas = tarefasPaginadas
+                .getContent ()
+                .stream ()
+                .map (tarefa -> {
+                    return ObterTarefaResponse
+                            .builder ()
+                            .id (tarefa.getId ())
+                            .titulo (tarefa.getTitulo ())
+                            .descricao (tarefa.getDescricao ())
+                            .status (tarefa.getStatus ())
+                            .dataInicio (tarefa.getDataInicio().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
+                            .dataFim (tarefa.getDataFim () != null ?
+                                    tarefa.getDataFim ().format (DateTimeFormatter.ofPattern (("dd/MM/yyyy"))) : null)
+                            .build ();
+                })
+                .toList ();
+
+
+        ObterTarefasPaginadasResponse response = ObterTarefasPaginadasResponse.builder ()
+                .paginaAtual (tarefasPaginadas.getNumber ())
+                .totalPaginas (tarefasPaginadas.getTotalPages ())
+                .totalItens (tarefasPaginadas.getTotalElements ())
+                .tarefas (tarefas)
+                .build ();
+
+
+        return new ResponseEntity<> (response, HttpStatus.OK);
+
+
+    }
+
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualiza uma tarefa previamente registrada no banco de dados")
+    public ResponseEntity<AtualizarTarefaResponse> update(@PathVariable Long id,
+                                                          @RequestBody AtualizarTarefaRequest request) {
+
+        Tarefa tarefaAtualizada = tarefaService.update (id, request);
+
+        AtualizarTarefaResponse atualizarTarefaResponse = AtualizarTarefaResponse
+                .builder ()
+                .id (tarefaAtualizada.getId ())
+                .titulo (tarefaAtualizada.getTitulo ())
+                .statusTarefa (tarefaAtualizada.getStatus ().toString ())
+                .descricao (tarefaAtualizada.getDescricao ())
+                .build ();
+
+
+        return new ResponseEntity<> (atualizarTarefaResponse, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.tarefaService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 
 }
