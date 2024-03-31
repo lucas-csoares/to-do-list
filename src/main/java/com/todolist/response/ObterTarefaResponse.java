@@ -21,4 +21,6 @@ public class ObterTarefaResponse {
     private String dataInicio;
 
     private String dataFim;
+
+    private String dataAtualizacao;
 }

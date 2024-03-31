@@ -1,13 +1,11 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
+import com.todolist.enums.StatusTarefa;
 import com.todolist.request.AtualizarStatusTarefaRequest;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
-import com.todolist.response.AtualizarStatusTarefaResponse;
-import com.todolist.response.AtualizarTarefaResponse;
-import com.todolist.response.ObterTarefaResponse;
-import com.todolist.response.ObterTarefasPaginadasResponse;
+import com.todolist.response.*;
 import com.todolist.service.TarefaService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,10 +28,19 @@ public class TarefaController {
 
     @PostMapping
     @Operation(summary = "Cadastra uma tarefa na base de dados")
-    public ResponseEntity<Tarefa> create(@Valid  @RequestBody CreateTarefaRequest request) {
+    public ResponseEntity<CriarTarefaResponse> create(@Valid  @RequestBody CreateTarefaRequest request) {
         Tarefa tarefaSave = tarefaService.create (request);
 
-        return new ResponseEntity<> (tarefaSave, HttpStatus.CREATED);
+        CriarTarefaResponse criarTarefaResponses = CriarTarefaResponse
+                .builder ()
+                .descricao (tarefaSave.getDescricao ())
+                .dataInicio (tarefaSave.getDataInicio ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
+                .id (tarefaSave.getId ())
+                .status ("Em progresso")
+                .titulo (tarefaSave.getTitulo ())
+                .build ();
+
+        return new ResponseEntity<> (criarTarefaResponses, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -67,6 +74,8 @@ public class TarefaController {
                             .dataInicio (tarefa.getDataInicio().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
                             .dataFim (tarefa.getDataFim () != null ?
                                     tarefa.getDataFim ().format (DateTimeFormatter.ofPattern (("dd/MM/yyyy"))) : null)
+                            .dataAtualizacao (tarefa.getDataAtualizacao ().format (DateTimeFormatter.ofPattern ("dd" +
+                                    "/MM/yyyy HH:mm:ss")))
                             .build ();
                 })
                 .toList ();
@@ -86,21 +95,22 @@ public class TarefaController {
     }
 
 
-    @PutMapping("/{id}/completed")
+    @PutMapping("/{id}/status")
     @Operation(summary = "Atualiza o status de uma tarefa para finalizada")
-    public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id,
-                                                                      @RequestBody AtualizarStatusTarefaRequest request) {
+    public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id) {
 
-        Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id, request);
+        Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id);
 
         AtualizarStatusTarefaResponse atualizarStatusTarefaResponse = AtualizarStatusTarefaResponse
                 .builder ()
                 .status (statusTarefaAtualizada.getStatus ().toString ())
-                .data (statusTarefaAtualizada.getDataFim ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
+                .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
+                .dataFim (statusTarefaAtualizada.getDataFim ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
                 .build ();
 
         return new ResponseEntity<> (atualizarStatusTarefaResponse, HttpStatus.OK);
     }
+
 
 
     @PutMapping("/{id}")
@@ -116,6 +126,8 @@ public class TarefaController {
                 .titulo (tarefaAtualizada.getTitulo ())
                 .statusTarefa (tarefaAtualizada.getStatus ().toString ())
                 .descricao (tarefaAtualizada.getDescricao ())
+                .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DateTimeFormatter.ofPattern ("dd" +
+                        "/MM/yyyy HH:mm:ss")))
                 .build ();
 
 

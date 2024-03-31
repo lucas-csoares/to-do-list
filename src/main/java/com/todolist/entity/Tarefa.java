@@ -8,13 +8,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tb_tarefas")
 @Setter
+@Data
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -47,6 +51,11 @@ public class Tarefa implements Serializable {
     @Column(name = "data_fim")
     @JsonIgnore
     private LocalDate dataFim;
+
+    @Column(name = "data_atualizacao")
+    @JsonIgnore
+    @UpdateTimestamp
+    private LocalDateTime dataAtualizacao;
 
 }
 

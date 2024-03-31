@@ -3,6 +3,9 @@ package com.todolist.service;
 
 import com.todolist.entity.Tarefa;
 import com.todolist.enums.StatusTarefa;
+import com.todolist.exceptions.NaoPermitirAtualizarException;
+import com.todolist.exceptions.NaoPermitirExcluirException;
+import com.todolist.exceptions.TarefaExistenteException;
 import com.todolist.repository.TarefaRepository;
 import com.todolist.request.AtualizarStatusTarefaRequest;
 import com.todolist.request.AtualizarTarefaRequest;
@@ -25,6 +28,14 @@ public class TarefaService {
 
 
     public Tarefa create(CreateTarefaRequest request) {
+
+        Tarefa tarefaValidacao = this.tarefaRepository.findByTituloOrDescricao (request.getTitulo (),
+                request.getDescricao ());
+
+        if(tarefaValidacao != null)
+            throw new TarefaExistenteException ("Já existe uma tarefa com mesmo título ou descrição");
+
+
         Tarefa tarefa = Tarefa.builder ()
                 .status (StatusTarefa.EM_PROGRESSO)
                 .titulo (request.getTitulo ())
@@ -37,16 +48,20 @@ public class TarefaService {
 
 
     public Page<Tarefa> findByTitulo(String titulo, Pageable pageable) {
-        return this.tarefaRepository.findByTituloContaining (titulo, pageable);
+        return this.tarefaRepository.findByTituloContainingOrderByDataAtualizacaoDesc (titulo, pageable);
     }
 
     public Page<Tarefa> findAll(Pageable pageable) {
-        return this.tarefaRepository.findAll (pageable);
+
+        return this.tarefaRepository.findAllByOrderByDataAtualizacaoDesc (pageable);
     }
 
     public Tarefa update(Long id, AtualizarTarefaRequest request) {
 
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+
+        if(tarefa.getStatus ().equals (StatusTarefa.FINALIZADA))
+            throw new NaoPermitirAtualizarException("Não é permitido atualizar uma tarefa finalizada");
 
         tarefa.setTitulo (request.getTitulo ());
         tarefa.setDescricao (request.getDescricao ());
@@ -55,11 +70,16 @@ public class TarefaService {
         return tarefa;
     }
 
-    public Tarefa updateStatus (Long id, AtualizarStatusTarefaRequest request) {
+    public Tarefa updateStatus (Long id) {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
-        tarefa.setStatus (request.getStatus ());
-        tarefa.setDataFim (tarefa.getStatus () == StatusTarefa.FINALIZADA ? LocalDate.now () : null);
+        if(tarefa.getStatus ().equals (StatusTarefa.EM_PROGRESSO)) {
+            tarefa.setStatus (StatusTarefa.FINALIZADA);
+            tarefa.setDataFim (LocalDate.now ());
+        } else {
+            tarefa.setStatus (StatusTarefa.EM_PROGRESSO);
+            tarefa.setDataFim (null);
+        }
 
         this.tarefaRepository.save (tarefa);
         return tarefa;
@@ -67,6 +87,11 @@ public class TarefaService {
 
 
     public void delete(Long id) {
+        Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+
+        if(!StatusTarefa.EM_PROGRESSO.equals (tarefa.getStatus ()))
+            throw new NaoPermitirExcluirException ();
+
         this.tarefaRepository.deleteById (id);
     }
 

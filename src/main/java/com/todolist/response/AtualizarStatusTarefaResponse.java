@@ -9,5 +9,6 @@ import lombok.Setter;
 @Builder
 public class AtualizarStatusTarefaResponse {
     private String status;
-    private String data;
+    private String dataInicio;
+    private String dataFim;
 }

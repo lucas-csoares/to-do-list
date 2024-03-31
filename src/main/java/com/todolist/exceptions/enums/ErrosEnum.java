@@ -1,0 +1,5 @@
+package com.todolist.exceptions.enums;
+
+public enum ErrosEnum {
+        NAO_PERMITIR_EXCLUIR, NAO_PERMITIR_ATUALIZAR, TAREFA_JA_EXISTENTE;
+}
