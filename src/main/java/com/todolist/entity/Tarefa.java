@@ -32,7 +32,7 @@ public class Tarefa implements Serializable {
     private String titulo;
 
     @NotBlank(message = "A descrição é obrigatória")
-    @Column(length = 1000)
+    @Column(length = 50)
     private String descricao;
 
     @Enumerated(EnumType.STRING)

@@ -10,6 +10,7 @@ import com.todolist.response.ObterTarefaResponse;
 import com.todolist.response.ObterTarefasPaginadasResponse;
 import com.todolist.service.TarefaService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,7 @@ public class TarefaController {
 
     @PostMapping
     @Operation(summary = "Cadastra uma tarefa na base de dados")
-    public ResponseEntity<Tarefa> create(@RequestBody CreateTarefaRequest request) {
+    public ResponseEntity<Tarefa> create(@Valid  @RequestBody CreateTarefaRequest request) {
         Tarefa tarefaSave = tarefaService.create (request);
 
         return new ResponseEntity<> (tarefaSave, HttpStatus.CREATED);
@@ -39,7 +40,7 @@ public class TarefaController {
     @Operation(summary = "Se não for enviado nenhum parâmetro via url, lista todas as tarefas cadastradas. Caso " +
             "contrário, lista as tarefas cadastradas por título.")
     public ResponseEntity<ObterTarefasPaginadasResponse> findByTarefa(
-            @RequestParam(required = false) String titulo,
+            @Valid @RequestParam(required = false) String titulo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ){
@@ -105,7 +106,7 @@ public class TarefaController {
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza uma tarefa previamente registrada no banco de dados")
     public ResponseEntity<AtualizarTarefaResponse> update(@PathVariable Long id,
-                                                          @RequestBody AtualizarTarefaRequest request) {
+                                                          @Valid @RequestBody AtualizarTarefaRequest request) {
 
         Tarefa tarefaAtualizada = tarefaService.update (id, request);
 
