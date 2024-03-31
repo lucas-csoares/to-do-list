@@ -1,8 +1,10 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
+import com.todolist.request.AtualizarStatusTarefaRequest;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
+import com.todolist.response.AtualizarStatusTarefaResponse;
 import com.todolist.response.AtualizarTarefaResponse;
 import com.todolist.response.ObterTarefaResponse;
 import com.todolist.response.ObterTarefasPaginadasResponse;
@@ -34,6 +36,8 @@ public class TarefaController {
     }
 
     @GetMapping
+    @Operation(summary = "Se não for enviado nenhum parâmetro via url, lista todas as tarefas cadastradas. Caso " +
+            "contrário, lista as tarefas cadastradas por título.")
     public ResponseEntity<ObterTarefasPaginadasResponse> findByTarefa(
             @RequestParam(required = false) String titulo,
             @RequestParam(defaultValue = "0") int page,
@@ -81,6 +85,23 @@ public class TarefaController {
     }
 
 
+    @PutMapping("/{id}/completed")
+    @Operation(summary = "Atualiza o status de uma tarefa para finalizada")
+    public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id,
+                                                                      @RequestBody AtualizarStatusTarefaRequest request) {
+
+        Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id, request);
+
+        AtualizarStatusTarefaResponse atualizarStatusTarefaResponse = AtualizarStatusTarefaResponse
+                .builder ()
+                .status (statusTarefaAtualizada.getStatus ().toString ())
+                .data (statusTarefaAtualizada.getDataFim ().format (DateTimeFormatter.ofPattern ("dd/MM/yyyy")))
+                .build ();
+
+        return new ResponseEntity<> (atualizarStatusTarefaResponse, HttpStatus.OK);
+    }
+
+
     @PutMapping("/{id}")
     @Operation(summary = "Atualiza uma tarefa previamente registrada no banco de dados")
     public ResponseEntity<AtualizarTarefaResponse> update(@PathVariable Long id,
@@ -102,6 +123,7 @@ public class TarefaController {
 
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta uma tarefa previamente cadastrada pelo id")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         this.tarefaService.delete(id);
         return ResponseEntity.noContent().build();

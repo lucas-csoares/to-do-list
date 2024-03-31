@@ -4,12 +4,8 @@ import com.todolist.enums.StatusTarefa;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-public class AtualizarTarefaRequest {
-
-    private String titulo;
-    private String descricao;
-
+public class AtualizarStatusTarefaRequest {
+    private StatusTarefa status;
 }

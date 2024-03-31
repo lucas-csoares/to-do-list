@@ -2,6 +2,7 @@ package com.todolist.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todolist.enums.StatusTarefa;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "Todos os detalhes da tarefa")
 public class Tarefa implements Serializable {
 
     private static final long SerialVersionUID = 1L;

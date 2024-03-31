@@ -4,6 +4,7 @@ package com.todolist.service;
 import com.todolist.entity.Tarefa;
 import com.todolist.enums.StatusTarefa;
 import com.todolist.repository.TarefaRepository;
+import com.todolist.request.AtualizarStatusTarefaRequest;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,23 @@ public class TarefaService {
 
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
-        tarefa.setStatus (request.getStatusTarefa ());
         tarefa.setTitulo (request.getTitulo ());
         tarefa.setDescricao (request.getDescricao ());
-        tarefa.setDataFim (request.getStatusTarefa () == StatusTarefa.FINALIZADA ? LocalDate.now () : null);
 
         this.tarefaRepository.save (tarefa);
         return tarefa;
     }
+
+    public Tarefa updateStatus (Long id, AtualizarStatusTarefaRequest request) {
+        Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+
+        tarefa.setStatus (request.getStatus ());
+        tarefa.setDataFim (tarefa.getStatus () == StatusTarefa.FINALIZADA ? LocalDate.now () : null);
+
+        this.tarefaRepository.save (tarefa);
+        return tarefa;
+    }
+
 
     public void delete(Long id) {
         this.tarefaRepository.deleteById (id);
