@@ -1,8 +1,11 @@
 package com.todolist.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+@UtilityClass
 public class DataUtil {
 
     public final static DateTimeFormatter DATA = DateTimeFormatter.ofPattern ("dd/MM/yyyy");

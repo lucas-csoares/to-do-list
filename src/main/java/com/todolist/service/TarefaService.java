@@ -26,6 +26,19 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
     private TarefaRepository tarefaRepository;
 
 
+    @Operation(summary = "Pesquisa uma tarefa por título", description = "retorna a tarefa de acordo com o título " +
+            "passado como argumento")
+    public Page<Tarefa> findByTitulo(String titulo, Pageable pageable) {
+        return this.tarefaRepository.findByTituloContainingOrderByDataAtualizacaoDesc (titulo, pageable);
+    }
+
+    @Operation(summary = "Lista todas as tarefas", description = "retorna a lista de tarefas na ordem da mais " +
+            "recentemente atualizada")
+    public Page<Tarefa> findAll(Pageable pageable) {
+
+        return this.tarefaRepository.findAllByOrderByDataAtualizacaoDesc (pageable);
+    }
+
     @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada com base nos dados")
     @Override
     public Tarefa create(CreateTarefaRequest request) {
@@ -48,35 +61,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
 
 
-
-    @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
-            " previsão e prazo não for nulo e se a data de previsão for anterior a data atual")
-    public void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Integer prazo) {
-        if (dataPrevisao != null) {
-            if (prazo != null) {
-                throw new TarefaComPrazoEDataException();
-            }
-
-            if (now().isAfter(dataPrevisao)) {
-                throw new DataException("A data de previsão é anterior à data atual");
-            }
-        }
-    }
-
-
-    @Operation(summary = "Pesquisa uma tarefa por título", description = "retorna a tarefa de acordo com o título " +
-            "passado como argumento")
-    public Page<Tarefa> findByTitulo(String titulo, Pageable pageable) {
-        return this.tarefaRepository.findByTituloContainingOrderByDataAtualizacaoDesc (titulo, pageable);
-    }
-
-    public Page<Tarefa> findAll(Pageable pageable) {
-
-        return this.tarefaRepository.findAllByOrderByDataAtualizacaoDesc (pageable);
-    }
-
-
-
+    @Operation(summary = "Atualiza uma tarefa por id", description = "Retorna a tarefa atualizada")
     @Override
     public Tarefa update(Long id, AtualizarTarefaRequest request) {
 
@@ -102,6 +87,37 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
         return tarefa;
     }
 
+    @Operation(summary = "Deleta uma tarefa pelo seu id", description = "recupera a tarefa e a deleta da base de " +
+            "dados podendo lançar exceção em caso estar com status diferente de EM_PROGRESSO")
+    @Override
+    public void delete(Long id) {
+        Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+
+        if(!EM_PROGRESSO.equals (tarefa.getStatus ()))
+            throw new NaoPermitirExcluirException ();
+
+        this.tarefaRepository.deleteById (id);
+    }
+
+
+    @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
+            " previsão e prazo não for nulo e se a data de previsão for anterior a data atual")
+    public void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Integer prazo) {
+        if (dataPrevisao != null) {
+            if (prazo != null) {
+                throw new TarefaComPrazoEDataException();
+            }
+
+            if (now().isAfter(dataPrevisao)) {
+                throw new DataException("A data de previsão é anterior à data atual");
+            }
+        }
+    }
+
+
+
+    @Operation(summary = "Verifica a existência da tarefa", description = "Caso a tarefa já exista na base de dados, " +
+            "lança exceção")
     private void checkIfTaskExists(String titulo) {
 
         Tarefa tarefaValidacao = this.tarefaRepository.findByTitulo (titulo);
@@ -111,6 +127,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
     }
 
 
+    @Operation(summary = "Atualiza o status da tarefa", description = "retorna a tarefa cujo status foi atualizado")
     public Tarefa updateStatus (Long id) {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
@@ -126,16 +143,6 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
         return tarefa;
     }
 
-
-    @Override
-    public void delete(Long id) {
-        Tarefa tarefa = this.tarefaRepository.findById (id).get ();
-
-        if(!EM_PROGRESSO.equals (tarefa.getStatus ()))
-            throw new NaoPermitirExcluirException ();
-
-        this.tarefaRepository.deleteById (id);
-    }
 
 
 
