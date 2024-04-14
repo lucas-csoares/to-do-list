@@ -16,8 +16,6 @@ public class ObterTarefaResponse {
 
     private String titulo;
 
-    private String descricao;
-
     private StatusTarefa status;
 
     private String dataInicio;

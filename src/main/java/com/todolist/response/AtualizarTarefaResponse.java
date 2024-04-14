@@ -15,9 +15,7 @@ public class AtualizarTarefaResponse {
     private Long id;
     private String statusTarefa;
     private String titulo;
-    private String descricao;
     private String dataAtualizacao;
-
     private String dataPrevisao;
     private Integer prazo;
 }

@@ -12,7 +12,6 @@ import java.time.LocalDate;
 public class CriarTarefaResponse {
     private Long id;
     private String titulo;
-    private String descricao;
     private String status;
     private String dataInicio;
 

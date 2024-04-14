@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
 
-    Tarefa findByTituloOrDescricao(String titulo, String descricao);
+    Tarefa findByTitulo(String titulo);
 
     Page<Tarefa> findByTituloContainingOrderByDataAtualizacaoDesc(String titulo, Pageable pegeable);
     Page<Tarefa> findAllByOrderByDataAtualizacaoDesc(Pageable pegeable);

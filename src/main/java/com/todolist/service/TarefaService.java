@@ -29,7 +29,7 @@ public class TarefaService {
     @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada com base nos dados")
     public Tarefa create(CreateTarefaRequest request) {
 
-        Tarefa tarefaValidacao = this.tarefaRepository.findByTituloOrDescricao (request.getTitulo (), request.getDescricao ());
+        Tarefa tarefaValidacao = this.tarefaRepository.findByTitulo (request.getTitulo ());
 
 
         verificarDataPrevisaoEPrazo (request.getDataPrevisao (), request.getPrazo ());
@@ -44,12 +44,12 @@ public class TarefaService {
                 .titulo (request.getTitulo ())
                 .dataPrevisao (request.getDataPrevisao ())
                 .prazo (request.getPrazo ())
-                .descricao (request.getDescricao ())
                 .dataFim (null)
                 .build ();
 
         return this.tarefaRepository.save (tarefa);
     }
+
 
     @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
             " previsão e prazo não for nulo e se a data de previsão for anterior a data atual")
@@ -90,7 +90,6 @@ public class TarefaService {
             throw new NaoPermitirAtualizarException("Não é permitido atualizar uma tarefa finalizada");
 
         tarefa.setTitulo (request.getTitulo ());
-        tarefa.setDescricao (request.getDescricao ());
         tarefa.setPrazo (request.getPrazo ());
         tarefa.setDataPrevisao (request.getDataPrevisao ());
 

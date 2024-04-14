@@ -34,7 +34,6 @@ public class TarefaController {
 
         CriarTarefaResponse criarTarefaResponses = CriarTarefaResponse
                 .builder ()
-                .descricao (tarefaSave.getDescricao ())
                 .dataInicio (tarefaSave.getDataInicio ().format (DataUtil.DATA))
                 .id (tarefaSave.getId ())
                 .status ("Em progresso")
@@ -74,7 +73,6 @@ public class TarefaController {
                             .builder ()
                             .id (tarefa.getId ())
                             .titulo (tarefa.getTitulo ())
-                            .descricao (tarefa.getDescricao ())
                             .status (tarefa.getStatus ())
                             .dataPrevisao (tarefa.getDataPrevisao () != null ?
                                     tarefa.getDataPrevisao ().format (DataUtil.DATA) : null)
@@ -132,7 +130,6 @@ public class TarefaController {
                 .id (tarefaAtualizada.getId ())
                 .titulo (tarefaAtualizada.getTitulo ())
                 .statusTarefa (tarefaAtualizada.getStatus ().toString ())
-                .descricao (tarefaAtualizada.getDescricao ())
                 .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DataUtil.DATA_HORA))
                 .dataPrevisao (tarefaAtualizada.getDataPrevisao () != null ?
                         tarefaAtualizada.getDataPrevisao ().format (DataUtil.DATA) : null)

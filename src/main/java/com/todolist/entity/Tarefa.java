@@ -39,10 +39,6 @@ public class Tarefa implements Serializable {
     @NotBlank(message = "O título é obrigatório")
     private String titulo;
 
-    @NotBlank(message = "A descrição é obrigatória")
-    @Column(length = 50)
-    private String descricao;
-
     @Enumerated(EnumType.STRING)
     @NotNull(message = "O status da tarefa é obrigatório")
     private StatusTarefa status;
