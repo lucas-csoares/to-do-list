@@ -2,10 +2,10 @@ package com.todolist.service;
 
 
 import com.todolist.entity.Tarefa;
+
 import com.todolist.enums.StatusTarefa;
 import com.todolist.exceptions.*;
 import com.todolist.repository.TarefaRepository;
-import com.todolist.request.AtualizarStatusTarefaRequest;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,8 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
+
+import static com.todolist.enums.StatusTarefa.EM_PROGRESSO;
+import static com.todolist.enums.StatusTarefa.FINALIZADA;
+import static java.time.LocalDate.now;
 
 
 @Service
@@ -40,7 +43,7 @@ public class TarefaService {
 
 
         Tarefa tarefa = Tarefa.builder ()
-                .status (StatusTarefa.EM_PROGRESSO)
+                .status (EM_PROGRESSO)
                 .titulo (request.getTitulo ())
                 .dataPrevisao (request.getDataPrevisao ())
                 .prazo (request.getPrazo ())
@@ -59,7 +62,7 @@ public class TarefaService {
                 throw new TarefaComPrazoEDataException();
             }
 
-            if (LocalDate.now().isAfter(dataPrevisao)) {
+            if (now().isAfter(dataPrevisao)) {
                 throw new DataException("A data de previsão é anterior à data atual");
             }
         }
@@ -86,7 +89,7 @@ public class TarefaService {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
 
-        if(tarefa.getStatus ().equals (StatusTarefa.FINALIZADA))
+        if(tarefa.getStatus ().equals (FINALIZADA))
             throw new NaoPermitirAtualizarException("Não é permitido atualizar uma tarefa finalizada");
 
         tarefa.setTitulo (request.getTitulo ());
@@ -103,11 +106,11 @@ public class TarefaService {
     public Tarefa updateStatus (Long id) {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
-        if(tarefa.getStatus ().equals (StatusTarefa.EM_PROGRESSO)) {
-            tarefa.setStatus (StatusTarefa.FINALIZADA);
-            tarefa.setDataFim (LocalDate.now ());
+        if(tarefa.getStatus ().equals (EM_PROGRESSO)) {
+            tarefa.setStatus (FINALIZADA);
+            tarefa.setDataFim (now ());
         } else {
-            tarefa.setStatus (StatusTarefa.EM_PROGRESSO);
+            tarefa.setStatus (EM_PROGRESSO);
             tarefa.setDataFim (null);
         }
 
@@ -119,7 +122,7 @@ public class TarefaService {
     public void delete(Long id) {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
-        if(!StatusTarefa.EM_PROGRESSO.equals (tarefa.getStatus ()))
+        if(!EM_PROGRESSO.equals (tarefa.getStatus ()))
             throw new NaoPermitirExcluirException ();
 
         this.tarefaRepository.deleteById (id);

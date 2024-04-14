@@ -100,7 +100,7 @@ public class TarefaController {
     }
 
 
-    @PutMapping("/{id}/status")
+    @PatchMapping("/{id}/status")
     @Operation(summary = "Atualiza o status de uma tarefa para finalizada")
     public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id) {
 
