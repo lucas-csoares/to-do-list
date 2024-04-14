@@ -5,6 +5,7 @@ import com.todolist.exceptions.*;
 import com.todolist.repository.TarefaRepository;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
+import com.todolist.service.interfaces.OperacoesCRUDService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,24 +20,19 @@ import static java.time.LocalDate.now;
 
 @Service
 @Transactional
-public class TarefaService {
+public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaRequest, AtualizarTarefaRequest> {
 
     @Autowired
     private TarefaRepository tarefaRepository;
 
 
     @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada com base nos dados")
+    @Override
     public Tarefa create(CreateTarefaRequest request) {
 
-        Tarefa tarefaValidacao = this.tarefaRepository.findByTitulo (request.getTitulo ());
+       checkIfTaskExists (request.getTitulo ());
 
-
-        verificarDataPrevisaoEPrazo (request.getDataPrevisao (), request.getPrazo ());
-
-
-        if(tarefaValidacao != null)
-            throw new TarefaExistenteException ("Já existe uma tarefa com mesmo título");
-
+       verificarDataPrevisaoEPrazo (request.getDataPrevisao (), request.getPrazo ());
 
         Tarefa tarefa = Tarefa.builder ()
                 .status (EM_PROGRESSO)
@@ -49,6 +45,8 @@ public class TarefaService {
 
         return this.tarefaRepository.save (tarefa);
     }
+
+
 
 
     @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
@@ -79,11 +77,16 @@ public class TarefaService {
 
 
 
+    @Override
     public Tarefa update(Long id, AtualizarTarefaRequest request) {
+
 
         verificarDataPrevisaoEPrazo (request.getDataPrevisao (), request.getPrazo ());
 
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+
+        if(!tarefa.getTitulo ().equals (request.getTitulo ()))
+            checkIfTaskExists (request.getTitulo ());
 
 
         if(tarefa.getStatus ().equals (FINALIZADA))
@@ -99,6 +102,13 @@ public class TarefaService {
         return tarefa;
     }
 
+    private void checkIfTaskExists(String titulo) {
+
+        Tarefa tarefaValidacao = this.tarefaRepository.findByTitulo (titulo);
+
+        if(tarefaValidacao != null)
+            throw new TarefaExistenteException ("Já existe uma tarefa com mesmo título");
+    }
 
 
     public Tarefa updateStatus (Long id) {
@@ -117,6 +127,7 @@ public class TarefaService {
     }
 
 
+    @Override
     public void delete(Long id) {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 

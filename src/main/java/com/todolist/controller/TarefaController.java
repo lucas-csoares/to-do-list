@@ -31,18 +31,7 @@ public class TarefaController {
     public ResponseEntity<CriarTarefaResponse> create(@Valid  @RequestBody CreateTarefaRequest request) {
         Tarefa tarefaSave = tarefaService.create (request);
 
-        CriarTarefaResponse criarTarefaResponses = CriarTarefaResponse
-                .builder ()
-                .dataInicio (tarefaSave.getDataInicio ().format (DATA))
-                .id (tarefaSave.getId ())
-                .status ("Em progresso")
-                .dataPrevisao (formatarData (tarefaSave.getDataPrevisao ()))
-                .prioridade (tarefaSave.getPrioridade ().toString ())
-                .prazo (tarefaSave.getPrazo ())
-                .titulo (tarefaSave.getTitulo ())
-                .build ();
-
-        return new ResponseEntity<> (criarTarefaResponses, HttpStatus.CREATED);
+        return new ResponseEntity<> (createTarefaResponse (tarefaSave), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -53,47 +42,14 @@ public class TarefaController {
             @Valid @RequestParam(required = false) String titulo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
-    ){
+    ) {
+
+        Page<Tarefa> tarefasPaginadas = titulo == null ?
+                this.tarefaService.findAll (PageRequest.of (page, size)) :
+                this.tarefaService.findByTitulo (titulo, PageRequest.of (page, size));
 
 
-        Page<Tarefa> tarefasPaginadas;
-
-        if(titulo == null) {
-            tarefasPaginadas = this.tarefaService.findAll (PageRequest.of (page, size));
-        } else {
-            tarefasPaginadas = this.tarefaService.findByTitulo (titulo, PageRequest.of (page, size));
-        }
-
-        List<ObterTarefaResponse> tarefas = tarefasPaginadas
-                .getContent ()
-                .stream ()
-                .map (tarefa -> {
-                    return ObterTarefaResponse
-                            .builder ()
-                            .id (tarefa.getId ())
-                            .titulo (tarefa.getTitulo ())
-                            .status (tarefa.getStatus ())
-                            .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
-                            .prazo (tarefa.getPrazo ())
-                            .dataInicio (tarefa.getDataInicio().format (DATA))
-                            .dataFim (formatarData (tarefa.getDataFim ()))
-                            .dataAtualizacao (tarefa.getDataAtualizacao ().format (DATA_HORA))
-                            .build ();
-                })
-                .toList ();
-
-
-        ObterTarefasPaginadasResponse response = ObterTarefasPaginadasResponse.builder ()
-                .paginaAtual (tarefasPaginadas.getNumber ())
-                .totalPaginas (tarefasPaginadas.getTotalPages ())
-                .totalItens (tarefasPaginadas.getTotalElements ())
-                .tarefas (tarefas)
-                .build ();
-
-
-        return new ResponseEntity<> (response, HttpStatus.OK);
-
-
+        return new ResponseEntity<> (obterTarefasPaginadasResponse (tarefasPaginadas), HttpStatus.OK);
     }
 
 
@@ -103,14 +59,7 @@ public class TarefaController {
 
         Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id);
 
-        AtualizarStatusTarefaResponse atualizarStatusTarefaResponse = AtualizarStatusTarefaResponse
-                .builder ()
-                .status (statusTarefaAtualizada.getStatus ().toString ())
-                .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DATA))
-                .dataFim (statusTarefaAtualizada.getDataFim ().format (DATA))
-                .build ();
-
-        return new ResponseEntity<> (atualizarStatusTarefaResponse, HttpStatus.OK);
+        return new ResponseEntity<> (atualizarStatusTarefaResponse (statusTarefaAtualizada), HttpStatus.OK);
     }
 
 
@@ -121,19 +70,7 @@ public class TarefaController {
                                                           @Valid @RequestBody AtualizarTarefaRequest request) {
 
         Tarefa tarefaAtualizada = tarefaService.update (id, request);
-
-        AtualizarTarefaResponse atualizarTarefaResponse = AtualizarTarefaResponse
-                .builder ()
-                .id (tarefaAtualizada.getId ())
-                .titulo (tarefaAtualizada.getTitulo ())
-                .statusTarefa (tarefaAtualizada.getStatus ().toString ())
-                .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DATA_HORA))
-                .dataPrevisao (formatarData (tarefaAtualizada.getDataPrevisao ()))
-                .prazo (tarefaAtualizada.getPrazo ())
-                .build ();
-
-
-        return new ResponseEntity<> (atualizarTarefaResponse, HttpStatus.OK);
+        return new ResponseEntity<> (atualizarTarefaResponse (tarefaAtualizada), HttpStatus.OK);
     }
 
 
@@ -145,6 +82,78 @@ public class TarefaController {
     }
 
 
+    private CriarTarefaResponse createTarefaResponse(Tarefa tarefa) {
+
+        CriarTarefaResponse criarTarefaResponse = CriarTarefaResponse
+                .builder ()
+                .dataInicio (tarefa.getDataInicio ().format (DATA))
+                .id (tarefa.getId ())
+                .status ("Em progresso")
+                .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
+                .prioridade (tarefa.getPrioridade () != null ? tarefa.getPrioridade ().toString () : null)
+                .prazo (tarefa.getPrazo ())
+                .titulo (tarefa.getTitulo ())
+                .build ();
+
+        return criarTarefaResponse;
+    }
+
+
+    private List<ObterTarefaResponse> obterTarefaResposta(Page<Tarefa> tarefasPaginadas) {
+
+        List<ObterTarefaResponse> tarefas = tarefasPaginadas
+                .getContent ()
+                .stream ()
+                .map (tarefa -> ObterTarefaResponse
+                        .builder ()
+                        .id (tarefa.getId ())
+                        .titulo (tarefa.getTitulo ())
+                        .status (tarefa.getStatus ())
+                        .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
+                        .prazo (tarefa.getPrazo ())
+                        .prioridade (tarefa.getPrioridade () != null ? tarefa.getPrioridade ().toString () : null)
+                        .dataInicio (tarefa.getDataInicio().format (DATA))
+                        .dataFim (formatarData (tarefa.getDataFim ()))
+                        .dataAtualizacao (tarefa.getDataAtualizacao ().format (DATA_HORA))
+                        .build ())
+                .toList ();
+
+        return tarefas;
+    }
+
+
+    private ObterTarefasPaginadasResponse obterTarefasPaginadasResponse (Page<Tarefa> tarefasPaginadas) {
+
+        return ObterTarefasPaginadasResponse.builder ()
+                .paginaAtual (tarefasPaginadas.getNumber ())
+                .totalPaginas (tarefasPaginadas.getTotalPages ())
+                .totalItens (tarefasPaginadas.getTotalElements ())
+                .tarefas (obterTarefaResposta (tarefasPaginadas))
+                .build ();
+    }
+
+
+    private AtualizarStatusTarefaResponse atualizarStatusTarefaResponse(Tarefa statusTarefaAtualizada) {
+
+        return AtualizarStatusTarefaResponse
+                .builder ()
+                .status (statusTarefaAtualizada.getStatus ().toString ())
+                .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DATA))
+                .dataFim (statusTarefaAtualizada.getDataFim ().format (DATA))
+                .build ();
+    }
+
+    private AtualizarTarefaResponse atualizarTarefaResponse(Tarefa tarefaAtualizada) {
+        return AtualizarTarefaResponse
+                .builder ()
+                .id (tarefaAtualizada.getId ())
+                .titulo (tarefaAtualizada.getTitulo ())
+                .statusTarefa (tarefaAtualizada.getStatus ().toString ())
+                .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DATA_HORA))
+                .dataPrevisao (formatarData (tarefaAtualizada.getDataPrevisao ()))
+                .prazo (tarefaAtualizada.getPrazo ())
+                .build ();
+    }
 
 
 }
