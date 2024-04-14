@@ -86,6 +86,8 @@ public class TarefaController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta uma tarefa previamente cadastrada pelo id")
     @ApiResponse(responseCode = "204", description = "Tarefa deletada com sucesso")
+    @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
+    @ApiResponse(responseCode = "422", description = "Tarefa não pode ser deletada")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         this.tarefaService.delete(id);
         return ResponseEntity.noContent().build();
