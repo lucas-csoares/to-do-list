@@ -1,11 +1,15 @@
 package com.todolist.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.todolist.enums.StatusTarefa;
+import com.todolist.enums.TipoTarefa;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -52,6 +56,15 @@ public class Tarefa implements Serializable {
     @JsonIgnore
     private LocalDate dataFim;
 
+    @Column(name = "data_previsao")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate dataPrevisao;
+
+    @Column(name = "prazo_em_dias")
+    private Integer prazo;
+
+    // Atributo importante para listar as tarefas em ordem de atualização
     @Column(name = "data_atualizacao")
     @JsonIgnore
     @UpdateTimestamp

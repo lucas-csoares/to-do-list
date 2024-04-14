@@ -17,7 +17,7 @@ import java.util.Map;
 public class ExcecoesHandler {
 
     @ExceptionHandler(NaoPermitirExcluirException.class)
-    public ResponseEntity<ErrorResponse> naoPermitirExcluirExceptionHandler(NaoPermitirExcluirException erro) {
+    public ResponseEntity<ErrorResponse> naoPermitirExcluirExceptionHandler() {
 
         Map<String, String> response = new HashMap<> ();
         response.put ("codigo", ErrosEnum.NAO_PERMITIR_EXCLUIR.toString ());
@@ -70,6 +70,40 @@ public class ExcecoesHandler {
     }
 
 
+    @ExceptionHandler(TarefaComPrazoEDataException.class)
+    public ResponseEntity<ErrorResponse> TarefaComPrazoEDataExceptionHandler() {
+
+        Map<String, String> response = new HashMap<> ();
+        response.put ("codigo", ErrosEnum.NAO_PERMITIR_CRIAR.toString ());
+        response.put ("mensagem", "Só é permitido criar tarefa de um tipo: ou data ou prazo ou livre");
+
+        ErrorResponse errorResponse = ErrorResponse
+                .builder ()
+                .status(HttpStatus.BAD_REQUEST.toString ())
+                .erros(Collections.singletonList (response))
+                .build ();
+
+
+        return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(DataException.class)
+    public ResponseEntity<ErrorResponse> DataExceptionHandler(DataException erro) {
+
+        Map<String, String> response = new HashMap<> ();
+        response.put ("codigo", ErrosEnum.DATA_INVALIDA.toString ());
+        response.put ("mensagem", erro.getMessage ());
+
+        ErrorResponse errorResponse = ErrorResponse
+                .builder ()
+                .status(HttpStatus.BAD_REQUEST.toString ())
+                .erros(Collections.singletonList (response))
+                .build ();
+
+
+        return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
 
 

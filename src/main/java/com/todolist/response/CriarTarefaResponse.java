@@ -15,4 +15,7 @@ public class CriarTarefaResponse {
     private String descricao;
     private String status;
     private String dataInicio;
+
+    private String dataPrevisao;
+    private Integer prazo;
 }

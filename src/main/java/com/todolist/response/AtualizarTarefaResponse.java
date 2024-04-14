@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -15,4 +17,7 @@ public class AtualizarTarefaResponse {
     private String titulo;
     private String descricao;
     private String dataAtualizacao;
+
+    private String dataPrevisao;
+    private Integer prazo;
 }
