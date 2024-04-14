@@ -3,6 +3,7 @@ package com.todolist.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.todolist.enums.PrioridadeTarefa;
 import com.todolist.enums.StatusTarefa;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -35,7 +36,7 @@ public class Tarefa implements Serializable {
     @NotBlank(message = "O título é obrigatório")
     private String titulo;
 
-    @Enumerated(EnumType.STRING)
+        @Enumerated(EnumType.STRING)
     @NotNull(message = "O status da tarefa é obrigatório")
     private StatusTarefa status;
 
@@ -55,6 +56,9 @@ public class Tarefa implements Serializable {
 
     @Column(name = "prazo_em_dias")
     private Integer prazo;
+
+    @Enumerated(EnumType.STRING)
+    private PrioridadeTarefa prioridade;
 
     // Atributo importante para listar as tarefas em ordem de atualização
     @Column(name = "data_atualizacao")

@@ -26,5 +26,7 @@ public class ObterTarefaResponse {
 
     private String dataPrevisao;
 
+    private String prioridade;
+
     private Integer prazo;
 }

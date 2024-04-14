@@ -17,5 +17,6 @@ public class AtualizarTarefaResponse {
     private String titulo;
     private String dataAtualizacao;
     private String dataPrevisao;
+    private String prioridade;
     private Integer prazo;
 }

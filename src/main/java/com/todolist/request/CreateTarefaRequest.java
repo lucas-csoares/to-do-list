@@ -3,6 +3,9 @@ package com.todolist.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.todolist.enums.PrioridadeTarefa;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
@@ -23,4 +26,7 @@ public class CreateTarefaRequest {
     private LocalDate dataPrevisao;
 
     private Integer prazo;
+
+    @Enumerated(EnumType.STRING)
+    private PrioridadeTarefa prioridade;
 }

@@ -1,8 +1,6 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
-import com.todolist.enums.StatusTarefa;
-import com.todolist.request.AtualizarStatusTarefaRequest;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import com.todolist.response.*;
@@ -16,8 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static com.todolist.utils.DataUtil.*;
 
 @RestController
 @RequestMapping("/tarefa")
@@ -34,11 +33,11 @@ public class TarefaController {
 
         CriarTarefaResponse criarTarefaResponses = CriarTarefaResponse
                 .builder ()
-                .dataInicio (tarefaSave.getDataInicio ().format (DataUtil.DATA))
+                .dataInicio (tarefaSave.getDataInicio ().format (DATA))
                 .id (tarefaSave.getId ())
                 .status ("Em progresso")
-                .dataPrevisao (tarefaSave.getDataPrevisao () != null ?
-                        tarefaSave.getDataPrevisao ().format (DataUtil.DATA) : null)
+                .dataPrevisao (formatarData (tarefaSave.getDataPrevisao ()))
+                .prioridade (tarefaSave.getPrioridade ().toString ())
                 .prazo (tarefaSave.getPrazo ())
                 .titulo (tarefaSave.getTitulo ())
                 .build ();
@@ -74,13 +73,11 @@ public class TarefaController {
                             .id (tarefa.getId ())
                             .titulo (tarefa.getTitulo ())
                             .status (tarefa.getStatus ())
-                            .dataPrevisao (tarefa.getDataPrevisao () != null ?
-                                    tarefa.getDataPrevisao ().format (DataUtil.DATA) : null)
+                            .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
                             .prazo (tarefa.getPrazo ())
-                            .dataInicio (tarefa.getDataInicio().format (DataUtil.DATA))
-                            .dataFim (tarefa.getDataFim () != null ?
-                                    tarefa.getDataFim ().format (DataUtil.DATA) : null)
-                            .dataAtualizacao (tarefa.getDataAtualizacao ().format (DataUtil.DATA_HORA))
+                            .dataInicio (tarefa.getDataInicio().format (DATA))
+                            .dataFim (formatarData (tarefa.getDataFim ()))
+                            .dataAtualizacao (tarefa.getDataAtualizacao ().format (DATA_HORA))
                             .build ();
                 })
                 .toList ();
@@ -109,8 +106,8 @@ public class TarefaController {
         AtualizarStatusTarefaResponse atualizarStatusTarefaResponse = AtualizarStatusTarefaResponse
                 .builder ()
                 .status (statusTarefaAtualizada.getStatus ().toString ())
-                .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DataUtil.DATA))
-                .dataFim (statusTarefaAtualizada.getDataFim ().format (DataUtil.DATA))
+                .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DATA))
+                .dataFim (statusTarefaAtualizada.getDataFim ().format (DATA))
                 .build ();
 
         return new ResponseEntity<> (atualizarStatusTarefaResponse, HttpStatus.OK);
@@ -130,9 +127,8 @@ public class TarefaController {
                 .id (tarefaAtualizada.getId ())
                 .titulo (tarefaAtualizada.getTitulo ())
                 .statusTarefa (tarefaAtualizada.getStatus ().toString ())
-                .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DataUtil.DATA_HORA))
-                .dataPrevisao (tarefaAtualizada.getDataPrevisao () != null ?
-                        tarefaAtualizada.getDataPrevisao ().format (DataUtil.DATA) : null)
+                .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DATA_HORA))
+                .dataPrevisao (formatarData (tarefaAtualizada.getDataPrevisao ()))
                 .prazo (tarefaAtualizada.getPrazo ())
                 .build ();
 

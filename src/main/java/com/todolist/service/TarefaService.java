@@ -1,9 +1,6 @@
 package com.todolist.service;
 
-
 import com.todolist.entity.Tarefa;
-
-import com.todolist.enums.StatusTarefa;
 import com.todolist.exceptions.*;
 import com.todolist.repository.TarefaRepository;
 import com.todolist.request.AtualizarTarefaRequest;
@@ -15,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
-
 import static com.todolist.enums.StatusTarefa.EM_PROGRESSO;
 import static com.todolist.enums.StatusTarefa.FINALIZADA;
 import static java.time.LocalDate.now;
@@ -39,7 +35,7 @@ public class TarefaService {
 
 
         if(tarefaValidacao != null)
-            throw new TarefaExistenteException ("Já existe uma tarefa com mesmo título ou descrição");
+            throw new TarefaExistenteException ("Já existe uma tarefa com mesmo título");
 
 
         Tarefa tarefa = Tarefa.builder ()
@@ -47,6 +43,7 @@ public class TarefaService {
                 .titulo (request.getTitulo ())
                 .dataPrevisao (request.getDataPrevisao ())
                 .prazo (request.getPrazo ())
+                .prioridade (request.getPrioridade ())
                 .dataFim (null)
                 .build ();
 
@@ -95,6 +92,7 @@ public class TarefaService {
         tarefa.setTitulo (request.getTitulo ());
         tarefa.setPrazo (request.getPrazo ());
         tarefa.setDataPrevisao (request.getDataPrevisao ());
+        tarefa.setPrioridade (request.getPrioridade ());
 
 
         this.tarefaRepository.save (tarefa);
