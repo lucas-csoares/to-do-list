@@ -1,7 +1,6 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
-import com.todolist.exceptions.NaoPermitirExcluirException;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import com.todolist.response.*;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.todolist.utils.DataUtil.*;
 
@@ -88,17 +86,9 @@ public class TarefaController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta uma tarefa previamente cadastrada pelo id")
     @ApiResponse(responseCode = "204", description = "Tarefa deletada com sucesso")
-    @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
-    @ApiResponse(responseCode = "422", description = "Tarefa não pode ser deletada")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        try {
-            this.tarefaService.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (NaoPermitirExcluirException e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
-        }
+        this.tarefaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

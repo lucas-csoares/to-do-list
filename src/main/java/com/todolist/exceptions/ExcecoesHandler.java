@@ -106,6 +106,25 @@ public class ExcecoesHandler {
     }
 
 
+    @ExceptionHandler(TarefaNaoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> tarefaNaoEncontradaExceptionHandler() {
+
+        Map<String, String> response = new HashMap<> ();
+        response.put ("codigo", ErrosEnum.TAREFA_NAO_ENCONTRADA.toString ());
+        response.put ("mensagem", "A tarefa não existe no banco de dados");
+
+        ErrorResponse errorResponse = ErrorResponse
+                .builder ()
+                .status(HttpStatus.NOT_FOUND.toString ())
+                .erros(Collections.singletonList (response))
+                .build ();
+
+
+        return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+
 
 
 }

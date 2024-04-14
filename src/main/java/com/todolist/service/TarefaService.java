@@ -68,7 +68,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
         verificarDataPrevisaoEPrazo (request.getDataPrevisao (), request.getPrazo ());
 
-        Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+        Tarefa tarefa = this.tarefaRepository.findById(id).orElseThrow(TarefaNaoEncontradaException::new);
 
         if(!tarefa.getTitulo ().equals (request.getTitulo ()))
             checkIfTaskExists (request.getTitulo ());
@@ -91,7 +91,9 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
             "dados podendo lançar exceção em caso estar com status diferente de EM_PROGRESSO")
     @Override
     public void delete(Long id) {
-        Tarefa tarefa = this.tarefaRepository.findById (id).get ();
+
+        Tarefa tarefa = this.tarefaRepository.findById(id).orElseThrow(TarefaNaoEncontradaException::new);
+
 
         if(!EM_PROGRESSO.equals (tarefa.getStatus ()))
             throw new NaoPermitirExcluirException ();
