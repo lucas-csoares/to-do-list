@@ -4,7 +4,7 @@ public interface OperacoesCRUDService<R, P1, P2> {
 
     R create(P1 request);
 
-    R update(Long id, P2 response);
+    R update(Long id, P2 request);
 
     void delete(Long id);
 

@@ -29,4 +29,6 @@ public class ObterTarefaResponse {
     private String prioridade;
 
     private Integer prazo;
+
+    private String diasRestantes;
 }

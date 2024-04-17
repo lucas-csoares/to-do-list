@@ -39,7 +39,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
         return this.tarefaRepository.findAllByOrderByDataAtualizacaoDesc (pageable);
     }
 
-    @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada com base nos dados")
+    @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada na base de dados")
     @Override
     public Tarefa create(CreateTarefaRequest request) {
 
