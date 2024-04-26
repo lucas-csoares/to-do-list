@@ -5,7 +5,6 @@ import com.todolist.enums.StatusTarefa;
 import com.todolist.response.*;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -55,7 +54,7 @@ public class ConverterResponseUtil {
             return tarefa.getDataInicio ().isAfter (now ()) ? difDias :
                     tarefa.getPrazo () - difDias;
         } else if (tarefa.getDataPrevisao () != null) {
-            difDias = ChronoUnit.DAYS.between (tarefa.getDataPrevisao (), now ());
+            difDias = ChronoUnit.DAYS.between (now (), tarefa.getDataPrevisao ());
             return difDias;
         }
         return null;
@@ -96,7 +95,7 @@ public class ConverterResponseUtil {
                 .getContent ()
                 .stream ()
                 .map (tarefa -> {
-                    tarefa.setDataInicio (LocalDate.of(2024, 4, 28));
+                    //tarefa.setDataInicio (LocalDate.of(2024, 4, 30));
                     return ObterTarefaResponse
                             .builder ()
                             .id (tarefa.getId ())
@@ -130,11 +129,16 @@ public class ConverterResponseUtil {
 
     public static AtualizarStatusTarefaResponse atualizarStatusTarefaResponse(Tarefa statusTarefaAtualizada) {
 
+
+        String dataFim = statusTarefaAtualizada.getDataFim () != null ?
+                statusTarefaAtualizada.getDataFim ().format (DATA) :
+                null;
+
         return AtualizarStatusTarefaResponse
                 .builder ()
                 .status (statusTarefaAtualizada.getStatus ().toString ())
                 .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DATA))
-                .dataFim (statusTarefaAtualizada.getDataFim ().format (DATA))
+                .dataFim (dataFim)
                 .build ();
     }
 

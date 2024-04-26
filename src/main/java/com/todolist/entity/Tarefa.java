@@ -57,8 +57,8 @@ public class Tarefa implements Serializable {
     private LocalDate dataPrevisao;
 
     @Column(name = "prazo_em_dias")
-    @Min (value = 1)
-    @Max (value = 365)
+    @Min (value = 1, message = "A tarefa tem que ter no mínimo 1 dia de prazo")
+    @Max (value = 365, message = "A tarefa não pode ultrapassar 365 dias de prazo")
     private Long prazo;
 
     @Enumerated(EnumType.STRING)
