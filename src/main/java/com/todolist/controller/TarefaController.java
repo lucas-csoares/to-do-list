@@ -1,7 +1,6 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
-import com.todolist.enums.StatusTarefa;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import com.todolist.response.*;
@@ -17,13 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
-import static com.todolist.utils.DataUtil.*;
-import static java.time.LocalDate.now;
+import static com.todolist.utils.ConverterResponseUtil.*;
 
 @RestController
 @RequestMapping("/tarefa")
@@ -60,23 +53,9 @@ public class TarefaController {
                 this.tarefaService.findByTitulo (titulo, PageRequest.of (page, size));
 
 
-        return new ResponseEntity<> (obterTarefasPaginadasResponse (tarefasPaginadas), HttpStatus.OK);
+        return new ResponseEntity<> (obterTarefasPaginadasResponse (tarefasPaginadas),
+                HttpStatus.OK);
     }
-
-
-
-
-    @PatchMapping("/{id}/status")
-    @Operation(summary = "Atualiza o status de uma tarefa para finalizada")
-    @ApiResponse(responseCode = "200", description = "Status da tarefa atualizado com sucesso",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AtualizarStatusTarefaResponse.class))})
-    public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id) {
-
-        Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id);
-
-        return new ResponseEntity<> (atualizarStatusTarefaResponse (statusTarefaAtualizada), HttpStatus.OK);
-    }
-
 
 
     @PutMapping("/{id}")
@@ -90,7 +69,6 @@ public class TarefaController {
         return new ResponseEntity<> (atualizarTarefaResponse (tarefaAtualizada), HttpStatus.OK);
     }
 
-
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta uma tarefa previamente cadastrada pelo id")
     @ApiResponse(responseCode = "204", description = "Tarefa deletada com sucesso")
@@ -101,129 +79,16 @@ public class TarefaController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Atualiza o status de uma tarefa para finalizada")
+    @ApiResponse(responseCode = "200", description = "Status da tarefa atualizado com sucesso",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AtualizarStatusTarefaResponse.class))})
+    public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id) {
 
-    private CriarTarefaResponse createTarefaResponse(Tarefa tarefa) {
+        Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id);
 
-        CriarTarefaResponse criarTarefaResponse = CriarTarefaResponse
-                .builder ()
-                .dataInicio (tarefa.getDataInicio ().format (DATA))
-                .id (tarefa.getId ())
-                .status ("Em progresso")
-                .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
-                .prioridade (tarefa.getPrioridade () != null ? tarefa.getPrioridade ().toString () : null)
-                .prazo (tarefa.getPrazo ())
-                .titulo (tarefa.getTitulo ())
-                .build ();
-
-        return criarTarefaResponse;
+        return new ResponseEntity<> (atualizarStatusTarefaResponse (statusTarefaAtualizada),
+                HttpStatus.OK);
     }
-
-    public Long calcPrazo(Tarefa tarefa) {
-        Long difDias;
-
-        if(tarefa.getPrazo () != null) {
-            difDias = ChronoUnit.DAYS.between (tarefa.getDataInicio (), now ());
-            return tarefa.getPrazo () - difDias;
-        } else if (tarefa.getDataPrevisao () != null) {
-            difDias = ChronoUnit.DAYS.between (tarefa.getDataPrevisao (), now ());
-            return difDias;
-        }
-        return null;
-    }
-
-    private String formatDiasRestantes(Tarefa tarefa) {
-
-        if (tarefa.getStatus () == StatusTarefa.FINALIZADA) {
-            return "Concluída";
-        }
-
-        Long diasRestantes = calcPrazo (tarefa);
-        if (diasRestantes != null) {
-            if (diasRestantes < 0)
-                return "Você está a " + (diasRestantes * (-1)) + " dias atrasado.";
-            else
-                return "Falta " + diasRestantes + " dias para concluir sua tarefa";
-        } else {
-            return "Prevista";
-        }
-
-
-    }
-
-    public Long checkPrazo(Tarefa tarefa) {
-
-        if(tarefa.getPrazo () != null) {
-            Long difDias = calcPrazo (tarefa);
-
-            if(difDias < 0)
-                return 0L;
-            else
-                return difDias;
-        }
-        return null;
-    }
-
-
-    private List<ObterTarefaResponse> obterTarefaResposta(Page<Tarefa> tarefasPaginadas) {
-
-
-
-        List<ObterTarefaResponse> tarefas = tarefasPaginadas
-                .getContent ()
-                .stream ()
-                .map (tarefa -> ObterTarefaResponse
-                        .builder ()
-                        .id (tarefa.getId ())
-                        .titulo (tarefa.getTitulo ())
-                        .status (tarefa.getStatus ())
-                        .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
-                        .prazo (checkPrazo (tarefa) + " dias")
-                        .statusConformeTipo (formatDiasRestantes (tarefa))
-                        .prioridade (tarefa.getPrioridade () != null ? tarefa.getPrioridade ().toString () : null)
-                        .dataInicio (tarefa.getDataInicio().format (DATA))
-                        .dataFim (formatarData (tarefa.getDataFim ()))
-                        .dataAtualizacao (tarefa.getDataAtualizacao ().format (DATA_HORA))
-                        .build ())
-                .toList ();
-
-
-
-        return tarefas;
-    }
-
-
-    private ObterTarefasPaginadasResponse obterTarefasPaginadasResponse (Page<Tarefa> tarefasPaginadas) {
-
-        return ObterTarefasPaginadasResponse.builder ()
-                .paginaAtual (tarefasPaginadas.getNumber ())
-                .totalPaginas (tarefasPaginadas.getTotalPages ())
-                .totalItens (tarefasPaginadas.getTotalElements ())
-                .tarefas (obterTarefaResposta (tarefasPaginadas))
-                .build ();
-    }
-
-
-    private AtualizarStatusTarefaResponse atualizarStatusTarefaResponse(Tarefa statusTarefaAtualizada) {
-
-        return AtualizarStatusTarefaResponse
-                .builder ()
-                .status (statusTarefaAtualizada.getStatus ().toString ())
-                .dataInicio (statusTarefaAtualizada.getDataInicio ().format (DATA))
-                .dataFim (statusTarefaAtualizada.getDataFim ().format (DATA))
-                .build ();
-    }
-
-    private AtualizarTarefaResponse atualizarTarefaResponse(Tarefa tarefaAtualizada) {
-        return AtualizarTarefaResponse
-                .builder ()
-                .id (tarefaAtualizada.getId ())
-                .titulo (tarefaAtualizada.getTitulo ())
-                .statusTarefa (tarefaAtualizada.getStatus ().toString ())
-                .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DATA_HORA))
-                .dataPrevisao (formatarData (tarefaAtualizada.getDataPrevisao ()))
-                .prazo (tarefaAtualizada.getPrazo ())
-                .build ();
-    }
-
 
 }
