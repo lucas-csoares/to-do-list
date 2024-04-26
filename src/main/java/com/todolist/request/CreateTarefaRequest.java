@@ -25,7 +25,7 @@ public class CreateTarefaRequest {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate dataPrevisao;
 
-    private Integer prazo;
+    private Long prazo;
 
     @Enumerated(EnumType.STRING)
     private PrioridadeTarefa prioridade;

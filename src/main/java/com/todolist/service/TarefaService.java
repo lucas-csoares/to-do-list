@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 import static com.todolist.enums.StatusTarefa.EM_PROGRESSO;
 import static com.todolist.enums.StatusTarefa.FINALIZADA;
 import static java.time.LocalDate.now;
@@ -42,6 +44,9 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
     @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada na base de dados")
     @Override
     public Tarefa create(CreateTarefaRequest request) {
+
+        if(request.getPrioridade () == null)
+            throw new PrioridadeException ("A tarefa tem que ter prioridade!");
 
        checkIfTaskExists (request.getTitulo ());
 
@@ -104,15 +109,16 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
             " previsão e prazo não for nulo e se a data de previsão for anterior a data atual")
-    public void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Integer prazo) {
-        if (dataPrevisao != null) {
-            if (prazo != null) {
-                throw new TarefaComPrazoEDataException();
-            }
+    public void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Long prazo) {
 
-            if (now().isAfter(dataPrevisao)) {
+        if (dataPrevisao != null) {
+
+            if (prazo != null)
+                throw new TarefaComPrazoEDataException();
+
+            if (now().isAfter(dataPrevisao))
                 throw new DataException("A data de previsão é anterior à data atual");
-            }
+
         }
     }
 
@@ -144,12 +150,5 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
         this.tarefaRepository.save (tarefa);
         return tarefa;
     }
-
-
-
-
-
-
-
 
 }

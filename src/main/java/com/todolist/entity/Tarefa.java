@@ -7,6 +7,8 @@ import com.todolist.enums.PrioridadeTarefa;
 import com.todolist.enums.StatusTarefa;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -55,12 +57,13 @@ public class Tarefa implements Serializable {
     private LocalDate dataPrevisao;
 
     @Column(name = "prazo_em_dias")
-    private Integer prazo;
+    @Min (value = 1)
+    @Max (value = 365)
+    private Long prazo;
 
     @Enumerated(EnumType.STRING)
     private PrioridadeTarefa prioridade;
 
-    // Atributo importante para listar as tarefas em ordem de atualização
     @Column(name = "data_atualizacao")
     @JsonIgnore
     @UpdateTimestamp

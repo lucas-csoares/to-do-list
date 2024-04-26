@@ -28,7 +28,7 @@ public class ObterTarefaResponse {
 
     private String prioridade;
 
-    private Integer prazo;
+    private String prazo;
 
-    private String diasRestantes;
+    private String statusConformeTipo;
 }

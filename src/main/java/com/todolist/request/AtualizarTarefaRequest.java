@@ -25,8 +25,7 @@ public class AtualizarTarefaRequest {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate dataPrevisao;
 
-    @Enumerated(EnumType.STRING)
-    private Integer prazo;
+    private Long prazo;
 
     private PrioridadeTarefa prioridade;
 }

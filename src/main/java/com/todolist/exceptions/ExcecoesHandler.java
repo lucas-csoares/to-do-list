@@ -88,6 +88,24 @@ public class ExcecoesHandler {
     }
 
 
+    @ExceptionHandler(PrioridadeException.class)
+    public ResponseEntity<ErrorResponse> priodidadeExceptionHandler(PrioridadeException erro) {
+
+        Map<String, String> response = new HashMap<> ();
+        response.put ("codigo", ErrosEnum.TAREFA_SEM_PRIORIDADE.toString ());
+        response.put ("mensagem", erro.getMessage ());
+
+        ErrorResponse errorResponse = ErrorResponse
+                .builder ()
+                .status(HttpStatus.BAD_REQUEST.toString ())
+                .erros(Collections.singletonList (response))
+                .build ();
+
+
+        return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(DataException.class)
     public ResponseEntity<ErrorResponse> DataExceptionHandler(DataException erro) {
 

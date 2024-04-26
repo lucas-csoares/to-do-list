@@ -16,5 +16,5 @@ public class CriarTarefaResponse {
     private String dataInicio;
     private String dataPrevisao;
     private String prioridade;
-    private Integer prazo;
+    private Long prazo;
 }

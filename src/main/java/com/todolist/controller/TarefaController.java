@@ -1,6 +1,7 @@
 package com.todolist.controller;
 
 import com.todolist.entity.Tarefa;
+import com.todolist.enums.StatusTarefa;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import com.todolist.response.*;
@@ -16,9 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.todolist.utils.DataUtil.*;
+import static java.time.LocalDate.now;
 
 @RestController
 @RequestMapping("/tarefa")
@@ -43,6 +48,7 @@ public class TarefaController {
             "contrário, lista as tarefas cadastradas por título.")
     @ApiResponse(responseCode = "200", description = "Lista de tarefas recuperada com sucesso",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ObterTarefasPaginadasResponse.class))})
+
     public ResponseEntity<ObterTarefasPaginadasResponse> findByTarefa(
             @Valid @RequestParam(required = false) String titulo,
             @RequestParam(defaultValue = "0") int page,
@@ -56,6 +62,8 @@ public class TarefaController {
 
         return new ResponseEntity<> (obterTarefasPaginadasResponse (tarefasPaginadas), HttpStatus.OK);
     }
+
+
 
 
     @PatchMapping("/{id}/status")
@@ -110,8 +118,55 @@ public class TarefaController {
         return criarTarefaResponse;
     }
 
+    public Long calcPrazo(Tarefa tarefa) {
+        Long difDias;
+
+        if(tarefa.getPrazo () != null) {
+            difDias = ChronoUnit.DAYS.between (tarefa.getDataInicio (), now ());
+            return tarefa.getPrazo () - difDias;
+        } else if (tarefa.getDataPrevisao () != null) {
+            difDias = ChronoUnit.DAYS.between (tarefa.getDataPrevisao (), now ());
+            return difDias;
+        }
+        return null;
+    }
+
+    private String formatDiasRestantes(Tarefa tarefa) {
+
+        if (tarefa.getStatus () == StatusTarefa.FINALIZADA) {
+            return "Concluída";
+        }
+
+        Long diasRestantes = calcPrazo (tarefa);
+        if (diasRestantes != null) {
+            if (diasRestantes < 0)
+                return "Você está a " + (diasRestantes * (-1)) + " dias atrasado.";
+            else
+                return "Falta " + diasRestantes + " dias para concluir sua tarefa";
+        } else {
+            return "Prevista";
+        }
+
+
+    }
+
+    public Long checkPrazo(Tarefa tarefa) {
+
+        if(tarefa.getPrazo () != null) {
+            Long difDias = calcPrazo (tarefa);
+
+            if(difDias < 0)
+                return 0L;
+            else
+                return difDias;
+        }
+        return null;
+    }
+
 
     private List<ObterTarefaResponse> obterTarefaResposta(Page<Tarefa> tarefasPaginadas) {
+
+
 
         List<ObterTarefaResponse> tarefas = tarefasPaginadas
                 .getContent ()
@@ -122,13 +177,16 @@ public class TarefaController {
                         .titulo (tarefa.getTitulo ())
                         .status (tarefa.getStatus ())
                         .dataPrevisao (formatarData (tarefa.getDataPrevisao ()))
-                        .prazo (tarefa.getPrazo ())
+                        .prazo (checkPrazo (tarefa) + " dias")
+                        .statusConformeTipo (formatDiasRestantes (tarefa))
                         .prioridade (tarefa.getPrioridade () != null ? tarefa.getPrioridade ().toString () : null)
                         .dataInicio (tarefa.getDataInicio().format (DATA))
                         .dataFim (formatarData (tarefa.getDataFim ()))
                         .dataAtualizacao (tarefa.getDataAtualizacao ().format (DATA_HORA))
                         .build ())
                 .toList ();
+
+
 
         return tarefas;
     }
