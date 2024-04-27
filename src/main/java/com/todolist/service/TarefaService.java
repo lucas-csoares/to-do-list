@@ -109,7 +109,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
             " previsão e prazo não for nulo e se a data de previsão for anterior a data atual")
-    public void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Long prazo) {
+    private void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Long prazo) {
 
         if (dataPrevisao != null) {
 

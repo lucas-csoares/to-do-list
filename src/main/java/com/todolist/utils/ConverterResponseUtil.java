@@ -33,18 +33,7 @@ public class ConverterResponseUtil {
 
     }
 
-  /*  private String checkPrevisao(Tarefa tarefa) {
-        return tarefa.getPrazo () != null ?
-                formatarData (diasPrevisao (tarefa.getDataInicio (), tarefa.getPrazo ())) : tarefa.getDataPrevisao () != null ?
-                formatarData (tarefa.getDataPrevisao ()) :
-                null;
-    }*/
-
-
- /*   private LocalDate diasPrevisao(LocalDate data, Long prazo) {
-        return data.plusDays (prazo);
-    }*/
-
+    //Data posterior: LocalDate.of(2024,5,15)
 
     private Long calcPrazo(Tarefa tarefa) {
         Long difDias;

@@ -1,0 +1,22 @@
+@startuml Diagrama de container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/msql_server.puml
+
+Person(user, "Usuário")
+System_Boundary(app, "Aplicação web") {
+    ContainerDb(data_base, "Banco de dados", "Container: PostgreSQL", "Armazena as informações da aplicação", $sprite="msql_server")
+    Container(todo_list, "Lista de tarefas", "Angular, Javascript, TypeScript", "Aplicação front-end que permite gerenciar tarefa")
+    Container(api, "API", "Java 21, Spring Boot", "Fornece as rotas de requisição para CRUD, via HTTPS")
+}
+
+Rel(user, todo_list, "Acessa", "HTTPS")
+Rel(todo_list, api, "Faz requisições para", "HTTPS / API")
+Rel(api, data_base, "Acessa dados", "JPA")
+Rel(data_base, api, "Retorna dados", "JPA")
+
+LAYOUT_WITH_LEGEND()
+
+@enduml

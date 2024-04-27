@@ -30,6 +30,7 @@ public class TarefaController {
     @Operation(summary = "Cadastra uma tarefa na base de dados")
     @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = CriarTarefaResponse.class))})
+
     public ResponseEntity<CriarTarefaResponse> create(@Valid  @RequestBody CreateTarefaRequest request) {
         Tarefa tarefaSave = tarefaService.create (request);
 

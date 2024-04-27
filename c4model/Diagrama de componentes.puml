@@ -1,0 +1,25 @@
+@startuml Diagrama de componentes
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/msql_server.puml
+
+System_Boundary(app, "API") {
+    Container(tarefa_controller, "Tarefa Controller", "Rest Controller", "Camada de controle que acessa as regras de negócio para criar, atualizar, deletar e listar as tarefas")
+    Container(tarefa_service, "Tarefa Service", "Service", "Camada de serviço que implementa regras de negócio")
+    Container(repository, "Tarefa Repository", "Repository", "Camada intermediária entre a camada de código e a de banco de dados")
+
+}
+    Container(todo_list, "Lista de tarefas", "Angular, Javascript, TypeScript", "Aplicação front-end que promove as funcionalidades de criar, editar e deletar tarefas")
+    ContainerDb(data_base, "Banco de dados", "H2", "Armazena as informações da aplicação", $sprite="msql_server")
+
+Rel(todo_list, tarefa_controller, "Faz chamadas de API", "HTTPS/JSON")
+Rel(tarefa_controller, tarefa_service, "Faz chamadas de método", "@Autowired")
+Rel(tarefa_service, repository, "Faz chamadas de método", "@Autowired")
+Rel(repository, data_base, "Acessa dados", "JPA")
+Rel(data_base, repository, "Retorna dados", "JPA")
+
+LAYOUT_WITH_LEGEND()
+
+@enduml

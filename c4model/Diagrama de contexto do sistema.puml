@@ -1,0 +1,22 @@
+@startuml Diagrama de contexto do sistema
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/msql_server.puml
+
+Person(user, "Usuário")
+System_Boundary(app, "Aplicação web") {
+    Container(back_end, "Back-end", "Java 21, Spring Boot", "Permite o CRUD de tarefa")
+    ContainerDb(data_base, "Banco de dados", "PostgreSQL", "Armazena os dados da aplicação", $sprite="msql_server")
+}
+System(todo_list, "Lista de tarefas")
+
+Rel(user, todo_list, "Utiliza", "HTTPS")
+Rel(todo_list, back_end, "Faz requisições para", "HTTPS / API")
+Rel(back_end, data_base, "Acessa dados", "JPA")
+Rel(data_base, back_end, "Retorna dados", "JPA")
+
+LAYOUT_WITH_LEGEND()
+
+@enduml

@@ -1,0 +1,59 @@
+@startuml Diagrama de código
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/msql_server.puml
+
+System_Boundary(app, "TodoListApplication (Main Class)") {
+    Container(tarefa_model, "Tarefa Model", "Java 21", "Camada de modelo da Tarefa que contém todos os seus atributos")
+    Container(tarefa_service, "Tarefa Service", "Service", "Camada de serviço, aplica regras do negócio")
+    Container(tarefa_controller, "Tarefa Controller", "Rest Controller", "Camada de controle para as rotas de CRUD")
+    Container(repository, "Repository", "JPA", "Camada intermediária entre o código e a do banco de dados")
+    ContainerDb(data_base, "Banco de dados", "PostgreSQL", "Armazena as informações da aplicação", $sprite="msql_server")
+
+    Rel(tarefa_controller, findByTarefa_controller, "Requisição")
+    Rel(tarefa_controller, create_controller, "Requisição")
+    Rel(tarefa_controller, update_controller, "Requisição")
+    Rel(tarefa_controller, delete_controller, "Requisição")
+    Rel(tarefa_controller, updateStatus_controller, "Requisição")
+
+    Rel(findByTarefa_controller,tarefa_service , "Encaminha para")
+    Rel(findByTarefa_controller,tarefa_service , "Encaminha para")
+    Rel(create_controller,tarefa_service , "Encaminha para")
+    Rel(update_controller,tarefa_service , "Encaminha para")
+    Rel(delete_controller,tarefa_service , "Encaminha para")
+    Rel(updateStatus_controller,tarefa_service , "Encaminha para")
+
+    Rel(tarefa_service, findByTitulo_service, "Executa")
+    Rel(tarefa_service, findAll_service, "Executa")
+    Rel(tarefa_service, create_service, "Executa")
+    Rel(tarefa_service, update_service, "Executa")
+    Rel(tarefa_service, delete_service, "Executa")
+    Rel(tarefa_service, updateStatus_service, "Executa")
+
+    Rel(create_service, checkIfTaskExists, "Executa - método privado")
+    Rel(create_service, verificarDataPrevisaoEPrazo, "Executa - método privado")
+
+
+    Rel(update_service, verificarDataPrevisaoEPrazo, "Executa - método privado")
+    Rel(update_service, checkIfTaskExists, "Executa - método privado")
+
+
+    Rel(tarefa_model, tarefa_service, "Utiliza modelo")
+
+    Rel(findByTitulo_service, repository, "Acessa")
+    Rel(findAll_service, repository, "Acessa")
+    Rel(create_service, repository, "Acessa")
+    Rel(update_service, repository, "Acessa")
+    Rel(delete_service, repository, "Acessa")
+    Rel(updateStatus_service, repository, "Acessa")
+
+    Rel(repository, data_base, "Acessa dados", "JPA")
+    Rel(data_base, repository, "Retorna dados", "JPA")
+
+}
+
+LAYOUT_WITH_LEGEND()
+
+@enduml
