@@ -7,6 +7,8 @@ import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
 import com.todolist.service.interfaces.OperacoesCRUDService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import static java.time.LocalDate.now;
 
 @Service
 @Transactional
+@Schema(description = "Realiza operações de CRUD e salva objeto na base de dados")
 public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaRequest, AtualizarTarefaRequest> {
 
     @Autowired
@@ -30,20 +33,20 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Pesquisa uma tarefa por título", description = "retorna a tarefa de acordo com o título " +
             "passado como argumento")
-    public Page<Tarefa> findByTitulo(String titulo, Pageable pageable) {
+    public Page<Tarefa> findByTitulo(@Parameter(description = "Título da tarefa a ser recuperada", required = true) String titulo, @Parameter(description = "Paginação com a página e o tamanho da página", required = true) Pageable pageable) {
         return this.tarefaRepository.findByTituloContainingOrderByDataAtualizacaoDesc (titulo, pageable);
     }
 
     @Operation(summary = "Lista todas as tarefas", description = "retorna a lista de tarefas na ordem da mais " +
             "recentemente atualizada")
-    public Page<Tarefa> findAll(Pageable pageable) {
+    public Page<Tarefa> findAll(@Parameter(description = "Paginação correspondente a lista de tarefas retornada", required = true) Pageable pageable) {
 
         return this.tarefaRepository.findAllByOrderByDataAtualizacaoDesc (pageable);
     }
 
     @Operation(summary = "Criar uma tarefa", description = "retorna a tarefa cadastrada na base de dados")
     @Override
-    public Tarefa create(CreateTarefaRequest request) {
+    public Tarefa create(@Parameter(description = "Objeto de transferência que vai ser convertido em objeto tarefa", required = true) CreateTarefaRequest request) {
 
         if(request.getPrioridade () == null)
             throw new PrioridadeException ("A tarefa tem que ter prioridade!");
@@ -68,7 +71,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Atualiza uma tarefa por id", description = "Retorna a tarefa atualizada")
     @Override
-    public Tarefa update(Long id, AtualizarTarefaRequest request) {
+    public Tarefa update(@Parameter(description = "id da tarefa a ser atualizada na base de dados", required = true) Long id, @Parameter(description = "Objeto de transferência que vai ser convertido em objeto tarefa afim de salvar na base de dados", required = true) AtualizarTarefaRequest request) {
 
 
         verificarDataPrevisaoEPrazo (request.getDataPrevisao (), request.getPrazo ());
@@ -95,7 +98,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
     @Operation(summary = "Deleta uma tarefa pelo seu id", description = "recupera a tarefa e a deleta da base de " +
             "dados podendo lançar exceção em caso estar com status diferente de EM_PROGRESSO")
     @Override
-    public void delete(Long id) {
+    public void delete(@Parameter(description = "id da tarefa a ser deletada da base de dados", required = true) Long id) {
 
         Tarefa tarefa = this.tarefaRepository.findById(id).orElseThrow(TarefaNaoEncontradaException::new);
 
@@ -109,7 +112,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Verifica validade de data da previsão e prazo", description = "lança uma exceção se data de" +
             " previsão e prazo não for nulo e se a data de previsão for anterior a data atual")
-    private void verificarDataPrevisaoEPrazo(LocalDate dataPrevisao, Long prazo) {
+    private void verificarDataPrevisaoEPrazo(@Parameter(description = "Data que vai ser verificada", required = true) LocalDate dataPrevisao, @Parameter(description = "Tipo Long que corresponde ao prazo da tarefa", required = true) Long prazo) {
 
         if (dataPrevisao != null) {
 
@@ -126,7 +129,8 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Verifica a existência da tarefa", description = "Caso a tarefa já exista na base de dados, " +
             "lança exceção")
-    private void checkIfTaskExists(String titulo) {
+    private void checkIfTaskExists(@Parameter(description = "Título que vai ser verificado se existe ou não",
+            required = true) String titulo) {
 
         Tarefa tarefaValidacao = this.tarefaRepository.findByTitulo (titulo);
 
@@ -136,7 +140,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
 
     @Operation(summary = "Atualiza o status da tarefa", description = "retorna a tarefa cujo status foi atualizado")
-    public Tarefa updateStatus (Long id) {
+    public Tarefa updateStatus (@Parameter(description = "id da tarefa cujo status será atualizado", required = true) Long id) {
         Tarefa tarefa = this.tarefaRepository.findById (id).get ();
 
         if(tarefa.getStatus ().equals (EM_PROGRESSO)) {

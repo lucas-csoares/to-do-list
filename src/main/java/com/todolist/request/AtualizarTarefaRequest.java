@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.todolist.enums.PrioridadeTarefa;
 import com.todolist.enums.StatusTarefa;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@Schema(description = "Possui atributos para requisição de atualização da tarefa")
 public class AtualizarTarefaRequest {
 
     @NotBlank(message = "{cadastrar.tarefa.request.titulo.obrigatorio}")

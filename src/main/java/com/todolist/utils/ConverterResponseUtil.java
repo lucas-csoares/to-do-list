@@ -3,9 +3,9 @@ package com.todolist.utils;
 import com.todolist.entity.Tarefa;
 import com.todolist.enums.StatusTarefa;
 import com.todolist.response.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import static com.todolist.utils.DataUtil.*;
@@ -13,6 +13,8 @@ import static com.todolist.utils.DataUtil.formatarData;
 import static java.time.LocalDate.now;
 
 @UtilityClass
+@Schema(description = "Classe utilitária que contém todos os métodos de conversão de objeto de transferência de dados" +
+        " em objeto da entidade Tarefa")
 public class ConverterResponseUtil {
 
 

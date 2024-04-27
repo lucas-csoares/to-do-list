@@ -2,6 +2,8 @@ package com.todolist.exceptions;
 
 import com.todolist.exceptions.enums.ErrosEnum;
 import com.todolist.response.ErrorResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,12 +12,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Outras métodos para lidar com exceções podem ser adicionados
- */
-@ControllerAdvice
-public class ExcecoesHandler {
 
+@ControllerAdvice
+@Schema(description = "Acessada ao ser lançado uma exceção")
+public class GlobalExceptionHandler {
+
+    @Operation(summary = "Captura a exceção de não permitir exclusão da tarefa e a trata")
     @ExceptionHandler(NaoPermitirExcluirException.class)
     public ResponseEntity<ErrorResponse> naoPermitirExcluirExceptionHandler() {
 
@@ -34,6 +36,7 @@ public class ExcecoesHandler {
     }
 
 
+    @Operation(summary = "Captura uma exceção de não permissão para atualizar e a trata")
     @ExceptionHandler(NaoPermitirAtualizarException.class)
     public ResponseEntity<ErrorResponse> naoPermitirAtualizarException(NaoPermitirAtualizarException erro) {
 
@@ -52,6 +55,7 @@ public class ExcecoesHandler {
     }
 
 
+    @Operation(summary = "Captura uma exceção de existência da tarefa e a trata")
     @ExceptionHandler(TarefaExistenteException.class)
     public ResponseEntity<ErrorResponse> tarefaExistenteExceptionHandler(TarefaExistenteException erro) {
 
@@ -70,6 +74,7 @@ public class ExcecoesHandler {
     }
 
 
+    @Operation(summary = "Captura uma exceção de tarefa com prazo e data e a trata")
     @ExceptionHandler(TarefaComPrazoEDataException.class)
     public ResponseEntity<ErrorResponse> TarefaComPrazoEDataExceptionHandler() {
 
@@ -87,7 +92,7 @@ public class ExcecoesHandler {
         return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-
+    @Operation(summary = "Captura uma exceção de prioridade da tarefa e a trata")
     @ExceptionHandler(PrioridadeException.class)
     public ResponseEntity<ErrorResponse> priodidadeExceptionHandler(PrioridadeException erro) {
 
@@ -105,7 +110,7 @@ public class ExcecoesHandler {
         return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-
+    @Operation(summary = "Captura uma exceção da data e a trata")
     @ExceptionHandler(DataException.class)
     public ResponseEntity<ErrorResponse> DataExceptionHandler(DataException erro) {
 
@@ -123,7 +128,7 @@ public class ExcecoesHandler {
         return new ResponseEntity<> (errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-
+    @Operation(summary = "Captura uma exceção de tarefa não encontrada e a trata")
     @ExceptionHandler(TarefaNaoEncontradaException.class)
     public ResponseEntity<ErrorResponse> tarefaNaoEncontradaExceptionHandler() {
 
@@ -146,3 +151,4 @@ public class ExcecoesHandler {
 
 
 }
+

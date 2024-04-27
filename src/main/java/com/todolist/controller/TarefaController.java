@@ -20,6 +20,7 @@ import static com.todolist.utils.ConverterResponseUtil.*;
 
 @RestController
 @RequestMapping("/tarefa")
+@Schema(description = "Atende a chamadas da API realizando operações CRUD")
 public class TarefaController {
 
     @Autowired
@@ -39,7 +40,7 @@ public class TarefaController {
 
     @GetMapping
     @Operation(summary = "Se não for enviado nenhum parâmetro via url, lista todas as tarefas cadastradas. Caso " +
-            "contrário, lista as tarefas cadastradas por título.")
+            "contrário, retorna a tarefa que corresponde ao título.")
     @ApiResponse(responseCode = "200", description = "Lista de tarefas recuperada com sucesso",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ObterTarefasPaginadasResponse.class))})
 
@@ -63,6 +64,7 @@ public class TarefaController {
     @Operation(summary = "Atualiza uma tarefa previamente registrada no banco de dados")
     @ApiResponse(responseCode = "200", description = "Tarefa atualizada com sucesso",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AtualizarTarefaResponse.class))})
+
     public ResponseEntity<AtualizarTarefaResponse> update(@PathVariable Long id,
                                                           @Valid @RequestBody AtualizarTarefaRequest request) {
 
@@ -75,6 +77,7 @@ public class TarefaController {
     @ApiResponse(responseCode = "204", description = "Tarefa deletada com sucesso")
     @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
     @ApiResponse(responseCode = "422", description = "Tarefa não pode ser deletada")
+
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         this.tarefaService.delete(id);
         return ResponseEntity.noContent().build();
@@ -84,6 +87,7 @@ public class TarefaController {
     @Operation(summary = "Atualiza o status de uma tarefa para finalizada")
     @ApiResponse(responseCode = "200", description = "Status da tarefa atualizado com sucesso",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AtualizarStatusTarefaResponse.class))})
+
     public ResponseEntity<AtualizarStatusTarefaResponse> updateStatus(@PathVariable Long id) {
 
         Tarefa statusTarefaAtualizada = tarefaService.updateStatus (id);

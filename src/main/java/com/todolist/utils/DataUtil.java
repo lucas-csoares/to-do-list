@@ -1,11 +1,13 @@
 package com.todolist.utils;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @UtilityClass
+@Schema(description = "Detalhes de operações e atributos referente a Data")
 public class DataUtil {
 
     public final static DateTimeFormatter DATA = DateTimeFormatter.ofPattern ("dd/MM/yyyy");

@@ -2,6 +2,8 @@ package com.todolist.validation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.todolist.response.ErrorResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.ConstraintViolation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
+@Schema(description = "Manipulador de exceção que lida com erros de validação de campos")
 public class ValidacaoCamposHandler {
 
+    @Operation(description = "Quando ocorrer uma exceção do tipo MethodArgumentNotValidException o método é chamado " +
+            "para construir uma resposta de erro personalizado")
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> tratarValidacoes(MethodArgumentNotValidException ex) {
 
@@ -48,6 +53,7 @@ public class ValidacaoCamposHandler {
     }
 
 
+    @Operation(description = "Obtém o nome da propriedade que falhou na validação")
     public String obterNomePropriedade(final FieldError error) {
 
         if(error.contains (ConstraintViolation.class)) {

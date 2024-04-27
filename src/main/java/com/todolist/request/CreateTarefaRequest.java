@@ -4,6 +4,7 @@ package com.todolist.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.todolist.enums.PrioridadeTarefa;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@Schema(description = "Possui atributos para requisição de criação da tarefa")
 public class CreateTarefaRequest {
 
     @NotBlank(message = "{cadastrar.tarefa.request.titulo.obrigatorio}")

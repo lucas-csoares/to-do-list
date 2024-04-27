@@ -1,10 +1,13 @@
 package com.todolist.service.interfaces;
 
-public interface OperacoesCRUDService<R, P1, P2> {
+import io.swagger.v3.oas.annotations.media.Schema;
 
-    R create(P1 request);
+@Schema(description = "Interface responsável por conter métodos CRUD")
+public interface OperacoesCRUDService<R, Request1, Request2> {
 
-    R update(Long id, P2 request);
+    R create(Request1 request);
+
+    R update(Long id, Request2 request);
 
     void delete(Long id);
 
