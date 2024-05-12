@@ -20,12 +20,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_tarefas")
-@Setter
 @Data
-@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Schema(description = "Todos os detalhes da tarefa")
 public class Tarefa implements Serializable {
 
