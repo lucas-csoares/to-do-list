@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
 @Schema(description = "Possui atributos para requisição de criação da tarefa")
 public class CreateTarefaRequest {
 
