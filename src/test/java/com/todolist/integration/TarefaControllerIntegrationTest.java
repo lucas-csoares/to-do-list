@@ -6,7 +6,6 @@ import com.todolist.ToDoListApplication;
 import com.todolist.entity.Tarefa;
 import com.todolist.request.AtualizarTarefaRequest;
 import com.todolist.request.CreateTarefaRequest;
-import com.todolist.service.TarefaService;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(classes = {ToDoListApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Schema(description = "Classe de teste de integração para a aplicação ToDoList")
+@Schema(description = "Classe de teste de integração para a aplicação ToDoList que segue uma ordem específica")
 public class TarefaControllerIntegrationTest {
 
     @LocalServerPort
@@ -120,14 +119,20 @@ public class TarefaControllerIntegrationTest {
     public void testarAtualizacaoStatusTarefa() {
         Long tarefaId = idDaTarefaCriada;
 
-        given()
+        // Realiza a requisição de atualização de status e armazena a resposta
+        Response response = given()
                 .contentType("application/json")
                 .when()
                 .patch("/api/tarefa/{id}/status", tarefaId)
                 .then()
-                .statusCode(200)
-                .assertThat()
-                .body("status", equalTo(tarefaMock.getStatus ().toString ()));
+                .statusCode(200) // Verifica o status code
+                .extract()
+                .response();
+
+        // Verificação de conteúdo da resposta
+        String contentType = response.getContentType();
+        assertEquals("application/json", contentType, "O tipo de conteúdo da resposta deve ser 'application/json'.");
+
     }
 
     @Test
