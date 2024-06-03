@@ -8,9 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
@@ -19,6 +17,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Possui atributos para requisição de atualização da tarefa")
 public class AtualizarTarefaRequest {
 

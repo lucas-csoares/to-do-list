@@ -104,7 +104,7 @@ public class TarefaMock {
 
     public static CreateTarefaRequest tarefaComDataPrevisao() {
         return CreateTarefaRequest.builder()
-                .titulo("Tarefa com data de previsão")
+                .titulo("Tarefa teste (version 08)")
                 .dataPrevisao(LocalDate.of(2024, 6, 25))
                 .prioridade(PrioridadeTarefa.ALTA)
                 .build();
@@ -152,7 +152,7 @@ public class TarefaMock {
     @Operation(description = "Cria um objeto mock para atualização de tarefa com data de previsão")
     public static AtualizarTarefaRequest atualizarTarefaComDataPrevisao() {
         return AtualizarTarefaRequest.builder()
-                .titulo("Tarefa com data de previsão atualizada")
+                .titulo("Tarefa com data de previsão atualizada (version 2)")
                 .dataPrevisao(LocalDate.of(2024, 7, 10))
                 .prioridade(PrioridadeTarefa.MEDIA)
                 .build();
