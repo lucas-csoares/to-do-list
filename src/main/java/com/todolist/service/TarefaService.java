@@ -100,11 +100,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
     @Override
     public void delete(@Parameter(description = "id da tarefa a ser deletada da base de dados", required = true) Long id) {
 
-        Tarefa tarefa = this.tarefaRepository.findById(id).orElseThrow(TarefaNaoEncontradaException::new);
-
-
-        if(!EM_PROGRESSO.equals (tarefa.getStatus ()))
-            throw new NaoPermitirExcluirException ();
+        this.tarefaRepository.findById(id).orElseThrow(TarefaNaoEncontradaException::new);
 
         this.tarefaRepository.deleteById (id);
     }
@@ -129,7 +125,7 @@ public class TarefaService implements OperacoesCRUDService<Tarefa, CreateTarefaR
 
     @Operation(summary = "Verifica a existência da tarefa", description = "Caso a tarefa já exista na base de dados, " +
             "lança exceção")
-    private void checkIfTaskExists(@Parameter(description = "Título que vai ser verificado se existe ou não",
+    public void checkIfTaskExists(@Parameter(description = "Título que vai ser verificado se existe ou não",
             required = true) String titulo) {
 
         Tarefa tarefaValidacao = this.tarefaRepository.findByTitulo (titulo);

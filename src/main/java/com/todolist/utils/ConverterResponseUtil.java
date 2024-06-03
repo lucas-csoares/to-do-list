@@ -142,6 +142,9 @@ public class ConverterResponseUtil {
                 .dataAtualizacao (tarefaAtualizada.getDataAtualizacao ().format (DATA_HORA))
                 .dataPrevisao (formatarData (tarefaAtualizada.getDataPrevisao ()))
                 .prazo (tarefaAtualizada.getPrazo ())
+                .prioridade (tarefaAtualizada.getPrioridade ().toString () != null ?
+                        tarefaAtualizada.getPrioridade ().toString () :
+                        null)
                 .build ();
     }
 
