@@ -44,8 +44,6 @@ public class TarefaControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private Tarefa tarefaMock;
-
     private static Long idDaTarefaCriada;
 
     private CreateTarefaRequest createTarefaRequest;
@@ -58,7 +56,6 @@ public class TarefaControllerIntegrationTest {
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = port;
 
-        tarefaMock = obterTarefaMockComDataPrevisao();
         createTarefaRequest = tarefaComDataPrevisao();
         atualizarTarefaRequest = atualizarTarefaComDataPrevisao();
 
