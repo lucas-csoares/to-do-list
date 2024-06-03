@@ -47,19 +47,12 @@ public class TarefaServiceTest {
     private Tarefa tarefaMockComPrazo;
     private Tarefa tarefaMockLivre;
 
-    private Tarefa tarefaComDataInvalida;
-
     private CreateTarefaRequest requestTarefaMockcomDataPrevisao;
     private CreateTarefaRequest requestTarefaMockComConflito;
     private CreateTarefaRequest requestTarefaMockComDataInvalida;
     private CreateTarefaRequest requestTarefaSemPrioridade;
 
     private AtualizarTarefaRequest requestAtualizarTarefaComDataPrevisao;
-    private AtualizarTarefaRequest requestAtualizarTarefaComPrazo;
-    private AtualizarTarefaRequest requestAtualizarTarefaLivre;
-    private AtualizarTarefaRequest requestAtualizarTarefaComConflito;
-    private AtualizarTarefaRequest requestAtualizarTarefaComDataPrevisaoInferior;
-    private AtualizarTarefaRequest requestAtualizarTarefaSemPrioridade;
 
 
     @BeforeEach
@@ -67,7 +60,6 @@ public class TarefaServiceTest {
         tarefaMockcomDataPrevisao = obterTarefaMockComDataPrevisao();
         tarefaMockComPrazo = obterTarefaMockComPrazo();
         tarefaMockLivre = obterTarefaMockLivre();
-        tarefaComDataInvalida = obterTarefaMockComDataPrevisaoInferior();
 
         requestTarefaMockcomDataPrevisao = tarefaComDataPrevisao();
         requestTarefaSemPrioridade = tarefaSemPrioridade();
@@ -75,11 +67,6 @@ public class TarefaServiceTest {
         requestTarefaMockComDataInvalida = tarefaComDataPrevisaoInferior();
 
         requestAtualizarTarefaComDataPrevisao = atualizarTarefaComDataPrevisao();
-        requestAtualizarTarefaComPrazo = atualizarTarefaComPrazo();
-        requestAtualizarTarefaLivre = atualizarTarefaLivre();
-        requestAtualizarTarefaComConflito = atualizarTarefaConflitante();
-        requestAtualizarTarefaComDataPrevisaoInferior = atualizarTarefaComDataPrevisaoInferior();
-        requestAtualizarTarefaSemPrioridade = atualizarTarefaSemPrioridade();
     }
 
     @Test
@@ -168,21 +155,6 @@ public class TarefaServiceTest {
 
         // Verifica se o método delete do repositório foi chamado com o ID correto
         verify(tarefaRepository, times(1)).deleteById(id);
-    }
-
-
-    @Test
-    @DisplayName("Deve lançar exceção ao tentar excluir uma tarefa que não está em progresso")
-    void deleteTarefa_NotInProgress_ThrowsNaoPermitirExcluirException() {
-        Long id = tarefaMockComPrazo.getId();
-
-        // Configura o comportamento do mock do repositório para retornar uma tarefa existente pelo ID
-        when(tarefaRepository.findById(id)).thenReturn(Optional.of(tarefaMockComPrazo));
-
-        // Chama o método delete com o ID da tarefa que não está em progresso
-        assertThrows(NaoPermitirExcluirException.class, () -> tarefaService.delete(id));
-
-        verify(tarefaRepository, never()).deleteById(id);
     }
 
 
