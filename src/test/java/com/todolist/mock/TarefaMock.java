@@ -29,6 +29,22 @@ public class TarefaMock {
                 .build();
     }
 
+    public static Tarefa tarefaComDataPrevisao2() {
+        return Tarefa.builder()
+                .titulo("Tarefa teste (version 15)")
+                .dataPrevisao(LocalDate.of(2024, 6, 25))
+                .prioridade(PrioridadeTarefa.ALTA)
+                .build();
+    }
+
+    public static CreateTarefaRequest tarefaComDataPrevisao() {
+        return CreateTarefaRequest.builder()
+                .titulo("Tarefa teste (version 16)")
+                .dataPrevisao(LocalDate.of(2024, 6, 25))
+                .prioridade(PrioridadeTarefa.ALTA)
+                .build();
+    }
+
     @Operation(description = "Cria um objeto mock com status finalizada")
     public static Tarefa obterTarefaMockFinalizada() {
         return Tarefa.builder()
@@ -102,13 +118,6 @@ public class TarefaMock {
     }
 
 
-    public static CreateTarefaRequest tarefaComDataPrevisao() {
-        return CreateTarefaRequest.builder()
-                .titulo("Tarefa teste (version 08)")
-                .dataPrevisao(LocalDate.of(2024, 6, 25))
-                .prioridade(PrioridadeTarefa.ALTA)
-                .build();
-    }
 
     public static CreateTarefaRequest tarefaSemPrioridade() {
         return CreateTarefaRequest.builder()
