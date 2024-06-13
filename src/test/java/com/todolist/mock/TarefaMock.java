@@ -23,23 +23,16 @@ public class TarefaMock {
                 .status(StatusTarefa.EM_PROGRESSO)
                 .dataInicio(LocalDate.now())
                 .dataAtualizacao(LocalDateTime.now())
-                .dataPrevisao(LocalDate.of(2024, 6, 25))
+                .dataPrevisao(LocalDate.of(2024, 9, 25))
                 .prioridade(PrioridadeTarefa.ALTA)
                 .prazo(null)
                 .build();
     }
 
-    public static Tarefa tarefaComDataPrevisao2() {
-        return Tarefa.builder()
-                .titulo("Tarefa teste (version 15)")
-                .dataPrevisao(LocalDate.of(2024, 6, 25))
-                .prioridade(PrioridadeTarefa.ALTA)
-                .build();
-    }
 
     public static CreateTarefaRequest tarefaComDataPrevisao() {
         return CreateTarefaRequest.builder()
-                .titulo("Tarefa teste (version 16)")
+                .titulo("Tarefa teste (version 17)")
                 .dataPrevisao(LocalDate.of(2024, 6, 25))
                 .prioridade(PrioridadeTarefa.ALTA)
                 .build();
