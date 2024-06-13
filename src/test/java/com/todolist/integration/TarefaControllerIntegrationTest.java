@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = {ToDoListApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -159,7 +158,6 @@ public class TarefaControllerIntegrationTest {
     @Test
     @Operation(description = "Faz uma requisição PUT para atualizar uma tarefa e verifica se a atualização foi bem-sucedida.")
     @Order(4)
-    @DependsOn("testarCriacaoDeTarefa")
     public void testarAtualizarTarefa() throws JsonProcessingException {
         String tarefaAtualizada = objectMapper.writeValueAsString(atualizarTarefaRequest);
         given()
