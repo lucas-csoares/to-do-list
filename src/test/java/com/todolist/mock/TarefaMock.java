@@ -43,6 +43,19 @@ public class TarefaMock {
                 .build();
     }
 
+    @Operation(description = "Cria um objeto mock sem ID")
+    public static Tarefa obterTarefaMockSemId() {
+        return Tarefa.builder()
+                .titulo("Tarefa sem ID")
+                .status(StatusTarefa.FINALIZADA)
+                .dataInicio(LocalDate.now())
+                .dataAtualizacao(LocalDateTime.now())
+                .dataPrevisao(LocalDate.of(2024, 6, 25))
+                .prioridade(PrioridadeTarefa.ALTA)
+                .prazo(null)
+                .build();
+    }
+
     @Operation(description = "Cria um objeto mock com prazo")
     public static Tarefa obterTarefaMockComPrazo() {
         return Tarefa.builder()
