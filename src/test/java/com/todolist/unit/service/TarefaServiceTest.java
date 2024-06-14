@@ -68,7 +68,7 @@ public class TarefaServiceTest {
     }
 
     @Test
-    @DisplayName("Criar tarefa com data de previsão inferior à atual lança DataInvalidaException")
+    @DisplayName("Criar tarefa com data de previsão inferior à atual -> lança DataInvalidaException")
     void createTarefa_PrevisaoInferiorDataAtual_ThrowsDataInvalidaException() {
 
         // Configura o comportamento do mock do repositório para aceitar a tarefa sem problemas

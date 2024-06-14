@@ -14,7 +14,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
 import static com.todolist.mock.TarefaMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 

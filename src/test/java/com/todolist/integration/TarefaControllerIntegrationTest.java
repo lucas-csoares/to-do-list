@@ -113,13 +113,12 @@ public class TarefaControllerIntegrationTest {
     @Operation(description = "Faz uma requisição PATCH para atualizar o status de uma tarefa para finalizada e verifica se o status de resposta é 200 (OK) e se o corpo da resposta contém o status atualizado corretamente.")
     @Order(5)
     public void testarAtualizacaoStatusTarefa() {
-        Long tarefaId = idDaTarefaCriada;
 
         // Realiza a requisição de atualização de status e armazena a resposta
         Response response = given()
                 .contentType("application/json")
                 .when()
-                .patch("/api/tarefa/{id}/status", tarefaId)
+                .patch("/api/tarefa/{id}/status", idDaTarefaCriada)
                 .then()
                 .statusCode(200) // Verifica o status code
                 .extract()
@@ -135,10 +134,9 @@ public class TarefaControllerIntegrationTest {
     @Operation(description = "Faz uma requisição DELETE para deletar uma tarefa pelo ID e verifica se o status de resposta é o esperado.")
     @Order(6)
     public void testarDeletarTarefa() {
-        Long tarefaId = idDaTarefaCriada;
 
         given()
-                .pathParam("id", tarefaId)
+                .pathParam("id", idDaTarefaCriada)
                 .when()
                 .delete("/api/tarefa/{id}")
                 .then()
