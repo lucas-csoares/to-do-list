@@ -1,0 +1,64 @@
+@startuml
+actor User
+participant "TarefaController" as Controller
+participant "TarefaService" as Service
+participant "TarefaRepository" as Repository
+participant "Tarefa" as Entity
+
+User -> Controller : POST /tarefa
+Controller -> Service : create(CreateTarefaRequest)
+Service -> Service : checkIfTaskExists(request.getTitulo())
+Service -> Service : verificarDataPrevisaoEPrazo(request.getDataPrevisao(), request.getPrazo())
+Service -> Entity : Tarefa.builder().build()
+Service -> Repository : save(tarefa)
+Repository --> Service : Tarefa salva
+Service --> Controller : CriarTarefaResponse
+Controller --> User : ResponseEntity<CriarTarefaResponse>
+
+User -> Controller : GET /tarefa
+Controller -> Service : findByTarefa(titulo, page, size)
+alt titulo == null
+    Service -> Repository : findAll(PageRequest.of(page, size))
+else
+    Service -> Repository : findByTitulo(titulo, PageRequest.of(page, size))
+end
+Repository --> Service : Page<Tarefa>
+Service --> Controller : ObterTarefasPaginadasResponse
+Controller --> User : ResponseEntity<ObterTarefasPaginadasResponse>
+
+User -> Controller : PUT /tarefa/{id}
+Controller -> Service : update(id, AtualizarTarefaRequest)
+Service -> Service : verificarDataPrevisaoEPrazo(request.getDataPrevisao(), request.getPrazo())
+Service -> Repository : findById(id)
+Repository --> Service : Tarefa encontrada
+Service -> Service : checkIfTaskExists(request.getTitulo())
+Service -> Repository : save(tarefa)
+Repository --> Service : Tarefa atualizada
+Service --> Controller : AtualizarTarefaResponse
+Controller --> User : ResponseEntity<AtualizarTarefaResponse>
+
+User -> Controller : DELETE /tarefa/{id}
+Controller -> Service : delete(id)
+Service -> Repository : findById(id)
+Repository --> Service : Tarefa encontrada
+Service -> Repository : deleteById(id)
+Repository --> Service : Tarefa deletada
+Service --> Controller : ResponseEntity.noContent()
+Controller --> User : ResponseEntity<Void>
+
+User -> Controller : PATCH /tarefa/{id}/status
+Controller -> Service : updateStatus(id)
+Service -> Repository : findById(id)
+Repository --> Service : Tarefa encontrada
+alt tarefa.getStatus() == EM_PROGRESSO
+    Service -> Entity : tarefa.setStatus(FINALIZADA)
+    Service -> Entity : tarefa.setDataFim(now())
+else
+    Service -> Entity : tarefa.setStatus(EM_PROGRESSO)
+    Service -> Entity : tarefa.setDataFim(null)
+end
+Service -> Repository : save(tarefa)
+Repository --> Service : Tarefa atualizada
+Service --> Controller : AtualizarStatusTarefaResponse
+Controller --> User : ResponseEntity<AtualizarStatusTarefaResponse>
+@enduml
