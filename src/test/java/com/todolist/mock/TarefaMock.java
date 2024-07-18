@@ -88,7 +88,7 @@ public class TarefaMock {
     public static CreateTarefaRequest tarefaComDataPrevisao() {
         return CreateTarefaRequest.builder()
                 .titulo("Tarefa teste (version 17)")
-                .dataPrevisao(LocalDate.of(2024, 6, 25))
+                .dataPrevisao(LocalDate.now ().plusYears (1L))
                 .prioridade(PrioridadeTarefa.ALTA)
                 .build();
     }
@@ -123,7 +123,7 @@ public class TarefaMock {
     public static AtualizarTarefaRequest atualizarTarefaComDataPrevisao() {
         return AtualizarTarefaRequest.builder()
                 .titulo("Tarefa com data de previsão atualizada (version 2)")
-                .dataPrevisao(LocalDate.of(2024, 7, 10))
+                .dataPrevisao(LocalDate.now ().plusYears (1L))
                 .prioridade(PrioridadeTarefa.MEDIA)
                 .build();
     }
